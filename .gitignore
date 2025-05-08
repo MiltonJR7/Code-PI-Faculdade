@@ -1,0 +1,9 @@
+# Ignorar arquivos binários
+*.exe
+*.bin
+output/
+
+# Ignorar arquivos temporários do sistema operacional
+*~
+.DS_Store
+Thumbs.db
