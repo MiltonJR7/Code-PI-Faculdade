@@ -1,0 +1,22 @@
+    if (arqPF) {
+
+        for (i = 0; i < quantPF; i++) {
+            
+            for (j = 0; listaPF[i].nome[j] != '\0'; j++) {
+                listaPF[i].nome[j] = toupper(listaPF[i].nome[j]);
+            }
+            for (j = 0; listaPF[i].email[j] != '\0'; j++) {
+                listaPF[i].email[j] = toupper(listaPF[i].email[j]);
+            }
+        }
+        
+        for (i = 0; i < quantPF; i++) {
+            fprintf(arqPF, "Nome: %s\n", listaPF[i].nome);
+            fprintf(arqPF, "CPF: %s\n", listaPF[i].cpf);
+            fprintf(arqPF, "RG: %s\n", listaPF[i].rg);
+            fprintf(arqPF, "Email: %s\n\n", listaPF[i].email);
+        }
+        fclose(arqPF);
+    } else {
+        printf("ERRO: nao foi possivel abrir o arquivo clientesPF.txt\n\n");
+    }
