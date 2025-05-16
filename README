@@ -1,0 +1,39 @@
+# 🌱 SIAGRO - Sistema de Gestão de Oficina Agrícola
+
+Este é um sistema em C voltado para o gerenciamento de uma oficina agrícola, permitindo o cadastro e a busca de clientes (PF e PJ), maquinários, peças e serviços.
+
+## 📦 Funcionalidades
+
+- Cadastro de:
+  - Clientes PF e PJ
+  - Maquinários e peças
+  - Serviços vinculados a CPF ou CNPJ
+- Busca por:
+  - CPF, CNPJ, códigos de maquinário/peça
+- Armazenamento via arquivos binários
+- Menu interativo via terminal
+
+## ⚠️ Status do Projeto
+
+🚧 **Em desenvolvimento**: o sistema ainda está sendo implementado. Algumas funcionalidades estão completas, outras estão em progresso ou planejadas.
+
+## 🛠 Tecnologias
+
+- Linguagem C
+- Arquivos binários (`fwrite`, `fread`)
+- Manipulação de strings e validações básicas
+
+## 🔄 Futuras melhorias
+
+- Funções de edição e exclusão de cadastros
+- Interface mais amigável no terminal
+- Melhor validação de entrada
+- Modularização do código (separar por arquivos)
+
+## 🚀 Como compilar
+
+Se estiver usando Windows:
+
+```bash
+gcc codigoSiagro.c -o siagro.exe
+./siagro.exe
