@@ -18,7 +18,7 @@ typedef struct {
 } clientesPF;
 
 typedef struct {
-    char nomeEmpresarial[MAXSTR], nomeDoResponsavel[MAXSTR],emailEmpresarial[MAXSTR], cnpj[15], telefoneEpresarial[12];
+    char nomeEmpresarial[MAXSTR], nomeDoResponsavel[MAXSTR],emailEmpresarial[MAXSTR], cnpj[15], telefoneEmpresarial[12];
 } clientesPJ;
 
 typedef struct {
@@ -40,10 +40,9 @@ typedef struct {
 } servicos;
 
 typedef struct {
-    char cpf[12], cnpj[15], codigo[20];
-    int opCliente, opProduto, qtdDesejada;
-    float subtotal, totalFinal;
-    int formaPagamento, confirmar; 
+    char cpfVenda[12], cnpjVenda[15], codigoVenda[20];
+    int quantDesejada, formaPagamento;
+    float precoParaPagar, precoFinalPagar;
     date D;
 } vendas;
 
@@ -105,6 +104,17 @@ void salvarServico(servicos S) {
     fclose(arqSer);
 }
 
+void salvarVendas(vendas V) {
+    FILE *arqVen = fopen("arqVendas.bin", "ab+");
+
+    if(arqVen == NULL) {
+        printf("\nERRO: impossivel acessar o arquivo!\n");
+    }
+
+    fwrite(&V, sizeof(vendas), 1, arqVen);
+    fclose(arqVen);
+}
+
 // TERMINA AQUI AS FUNCOES DE SALVAR EM ARQUIVOS BINARIOS --------------------------------------------
 // FUNCOES DE VALIDAR CPF E CNPJ EM ARQUIVOS BINARIOS --------------------------------------------
 
@@ -112,100 +122,121 @@ int validarCPF(FILE *arqPF, char cpf[]) {
     clientesPF PF;
 
     rewind(arqPF);
-    fread(&PF, sizeof(clientesPF), 1, arqPF);
-    while (!feof(arqPF) && stricmp(cpf, PF.cpf) != 0) {
-        fread(&PF, sizeof(clientesPF), 1, arqPF);
+    while (fread(&PF, sizeof(clientesPF), 1, arqPF) == 1) {
+        if (stricmp(cpf, PF.cpf) == 0) {
+            return (ftell(arqPF) - sizeof(clientesPF));
+        }
     }
 
-    if (!feof(arqPF)) {
-        return (ftell(arqPF) - sizeof(clientesPF));
-    } else {
-        return -1;
-    }   
+    return -1;
 }
 
 int validarCNPJ(FILE *arqPJ, char cnpj[]) {
     clientesPJ PJ;
 
     rewind(arqPJ);
-    fread(&PJ, sizeof(clientesPJ), 1, arqPJ);
-    while (!feof(arqPJ) && stricmp(cnpj, PJ.cnpj) != 0) {
-        fread(&PJ, sizeof(clientesPJ), 1, arqPJ);
+    while (fread(&PJ, sizeof(clientesPJ), 1, arqPJ) == 1) {
+        if (stricmp(cnpj, PJ.cnpj) == 0) {
+            return(ftell(arqPJ) - sizeof(clientesPJ));
+        }
     }
 
-    if (!feof(arqPJ)) {
-        return(ftell(arqPJ) - sizeof(clientesPJ));
-    } else {
-        return -1;
-    }
+    return -1;
 }
 
 int validarMaquinario(FILE *arqMaq, char codigo[]) {
     maquinarios M;
 
     rewind(arqMaq);
-    fread(&M, sizeof(maquinarios), 1, arqMaq);
-    while (!feof(arqMaq) && stricmp(codigo, M.codigo) != 0) {
-        fread(&M, sizeof(maquinarios), 1, arqMaq);
+    while (fread(&M, sizeof(maquinarios), 1, arqMaq) == 1) {
+        if(stricmp(codigo, M.codigo) == 0) {
+            return(ftell(arqMaq) - sizeof(maquinarios));
+        }
     }
-
-    if(!feof(arqMaq)) {
-        return(ftell(arqMaq) - sizeof(maquinarios));
-    } else {
-        return -1;
-    }
+    
+    return -1;
 }
 
 int validarPecas(FILE *arqPec, char codigo[]) {
     pecas P;
 
     rewind(arqPec);
-    fread(&P, sizeof(pecas), 1, arqPec);
-    while (!feof(arqPec) && stricmp(codigo, P.codigo) != 0) {
-        fread(&P, sizeof(pecas), 1, arqPec);
+    while (fread(&P, sizeof(pecas), 1, arqPec) == 1) {
+        if(stricmp(codigo, P.codigo) == 0) {
+            return(ftell(arqPec) - sizeof(pecas));
+        }
     }
 
-    if(!feof(arqPec)) {
-        return(ftell(arqPec) - sizeof(maquinarios));
-    } else {
-        return -1;
-    }
+    return -1;
 }
 
 int validarSerPF(FILE *arqSer, char cpfParaContrato[]) {
     servicos S;
 
     rewind(arqSer);
-    fread(&S, sizeof(servicos), 1, arqSer);
-    while (!feof(arqSer) && stricmp(cpfParaContrato, S.cpfParaContrato) != 0) {
-        fread(&S, sizeof(servicos), 1, arqSer);
+    while (fread(&S, sizeof(servicos), 1, arqSer) == 1) {
+        if (stricmp(cpfParaContrato, S.cpfParaContrato) == 0) {
+            return(ftell(arqSer) - sizeof(servicos));
+        }    
     }
 
-    if(!feof(arqSer)) {
-        return(ftell(arqSer) - sizeof(servicos));
-    } else {
-        return -1;
-    }
+    return -1;
 }
 
 int validarSerPJ(FILE *arqSer, char cnpjParaContrato[]) {
     servicos S;
 
     rewind(arqSer);
-    fread(&S, sizeof(servicos), 1, arqSer);
-    while (!feof(arqSer) && stricmp(cnpjParaContrato, S.cnpjParaContrato) != 0) {
-        fread(&S, sizeof(servicos), 1, arqSer);
+    while (fread(&S, sizeof(servicos), 1, arqSer) == 1) {
+        if(stricmp(cnpjParaContrato, S.cnpjParaContrato) == 0) {
+            return(ftell(arqSer) - sizeof(servicos));
+        }
     }
 
-    if(!feof(arqSer)) {
-        return(ftell(arqSer) - sizeof(servicos));
-    } else {
-        return -1;
+    return -1;
+}
+
+int validarSerCadPF(FILE *arqPF, char cpfParaContrato[]) {
+    clientesPF PF;
+
+    rewind(arqPF);
+    while (fread(&PF, sizeof(clientesPF), 1, arqPF) == 1) {
+        if (stricmp(cpfParaContrato, PF.cpf) == 0) {
+            return(ftell(arqPF) - sizeof(clientesPF));
+        }
     }
+    
+    return -1;
+}
+
+int validarSerCadPJ(FILE *arqPJ, char cnpjParaContrato[]) {
+    clientesPJ PJ;
+
+    rewind(arqPJ);
+    while (fread(&PJ, sizeof(clientesPJ), 1, arqPJ) == 1) {
+        if (stricmp(cnpjParaContrato, PJ.cnpj) == 0) {
+            return(ftell(arqPJ) - sizeof(clientesPJ));
+        }
+    }
+
+    return -1;
+}
+
+int validarVendasPF(FILE *arqVen, char cpf[]) {
+    vendas V;
+
+    rewind(arqVen);
+    while (fread(&V, sizeof(vendas), 1, arqVen) == 1) {
+        if(stricmp(cpf, V.cpfVenda) == 0) {
+            return(ftell(arqVen) - sizeof(vendas));
+        }
+    }
+
+    return -1;
 }
 
 // TERMINA AQUI AS FUNCOES DE VALIDAR CPF E CNPJ EM ARQUIVOS BINARIOS --------------------------------------------
-// FUNCAO DE CADASTROS DE USUARIOS, MAQUINARIOS, SERVICOS E PECAS --------------------------------------------
+// INICIO DA FUNCAO DE CADASTROS ---------------------------------------------------------------------------------
 
 void cadastroDeClientes() {
     clientesPF PF;
@@ -219,15 +250,16 @@ void cadastroDeClientes() {
     FILE *arqMaq = fopen("arqMaquinario.bin", "rb+");
     FILE *arqPec = fopen("arqPecas.bin", "rb+");
     FILE *arqSer = fopen("arqServicos.bin", "rb+");
+    FILE *arqVen = fopen("arqVendas.bin", "rb+");
 
-    int op, posCPF, posCNPJ, posMaq, posPec, posSerPF, posSerPJ;
+    int op, posCPF, posCNPJ, posMaq, posPec, posSerPF, posSerPJ, existeCpf, existeCnpj;
 
     //inicio abertura dos arquivos
-   if (arqPF == NULL) {
-    arqPF = fopen("arqPF.bin", "wb+");
     if (arqPF == NULL) {
-        printf("\nERRO ao criar o arquivo de clientes PF!");
-        return;
+        arqPF = fopen("arqPF.bin", "wb+");
+        if (arqPF == NULL) {
+            printf("\nERRO ao criar o arquivo de clientes PF!");
+            return;
     	}
 	}
 
@@ -262,6 +294,15 @@ void cadastroDeClientes() {
 	        return;
 	    }
 	}
+
+    if (arqVen == NULL) {
+        arqVen = fopen("arqVendas.bin", "wb+");
+	    if (arqVen == NULL) {
+	        printf("\nERRO ao criar o arquivo de venda!");
+	        return;
+	    }
+    }
+
 //fim de abertura de arquivo
 
     do {
@@ -348,7 +389,7 @@ void cadastroDeClientes() {
                                     PJ.nomeDoResponsavel[strcspn(PJ.nomeDoResponsavel, "\n")] = '\0';
 
                                     printf("\nO telefone empresarial:");
-                                    scanf("%11s", PJ.telefoneEpresarial);
+                                    scanf("%11s", PJ.telefoneEmpresarial);
                                     getchar();
                                     
                                     salvarClientePJ(PJ);
@@ -486,29 +527,37 @@ void cadastroDeClientes() {
                                 scanf("%11s", S.cpfParaContrato);
                                 getchar();
 
-                                posSerPF = validarSerPF(arqPec, S.cpfParaContrato);
+                                posSerPF = validarSerPF(arqSer, S.cpfParaContrato);
                                 
                                 if (posSerPF == -1) {
-                                    printf("\nQual o tipo de servico: ");
-                                    fgets(S.tipoServico, MAXSTR, stdin);
+                                    
+                                    existeCpf = validarSerCadPF(arqPF, S.cpfParaContrato);
 
-                                    printf("\nQual a descricao: ");
-                                    fgets(S.descricao, MAXSTR, stdin);
+                                    if (existeCpf == -1) {
+                                        printf("\nERRO: o cpf digitado nao foi encontrado!\n");
+                                    } else {
+                                        printf("\nQual o tipo de servico: ");
+                                        fgets(S.tipoServico, MAXSTR, stdin);
 
-                                    printf("\nQual o preco do servico: ");
-                                    scanf("%f", &S.preco);
+                                        printf("\nQual a descricao: ");
+                                        fgets(S.descricao, MAXSTR, stdin);
 
-                                    printf("\nQual a data para o servico <dd/mm/aaaa> : ");
-                                    scanf("%d%d%d", &S.D.dia, &S.D.mes, &S.D.ano);
-                                    getchar();
+                                        printf("\nQual o preco do servico: ");
+                                        scanf("%f", &S.preco);
 
-                                    salvarServico(S);
-                                    printf("\nServico cadastrado com sucesso!\n\n");
+                                        printf("\nQual a data para o servico <dd/mm/aaaa> : ");
+                                        scanf("%d%d%d", &S.D.dia, &S.D.mes, &S.D.ano);
+                                        getchar();
+
+                                        salvarServico(S);
+                                        printf("\nServico cadastrado com sucesso!\n\n");
+                                    }
+
                                 } else {
                                     servicos S_cpf_jaCadastrado;
                                     fseek(arqSer, posSerPF, 0);
                                     fread(&S_cpf_jaCadastrado, sizeof(servicos), 1, arqSer);
-                                    printf("\nO CPF digitado: %.3s.%.3s.%.3s-%.2s ja esta com um servico pendente!", S_cpf_jaCadastrado.cpfParaContrato, S_cpf_jaCadastrado.cpfParaContrato+3, S_cpf_jaCadastrado.cpfParaContrato+6, S_cpf_jaCadastrado.cpfParaContrato+9);
+                                    printf("\nO CPF digitado: %.3s.%.3s.%.3s-%.2s ja esta com um servico pendente!\n", S_cpf_jaCadastrado.cpfParaContrato, S_cpf_jaCadastrado.cpfParaContrato+3, S_cpf_jaCadastrado.cpfParaContrato+6, S_cpf_jaCadastrado.cpfParaContrato+9);
                                 }                                           
                             break;
                         case 2:
@@ -517,29 +566,37 @@ void cadastroDeClientes() {
                                 scanf("%14s", S.cnpjParaContrato);
                                 getchar();
 
-                                posSerPJ = validarSerPF(arqSer, S.cnpjParaContrato);
+                                posSerPJ = validarSerPJ(arqSer, S.cnpjParaContrato);
                                 
                                 if (posSerPJ == -1) {
-                                    printf("\nQual o tipo de servico: ");
-                                    fgets(S.tipoServico, MAXSTR, stdin);
+                                    
+                                    existeCnpj = validarSerCadPJ(arqPJ, S.cnpjParaContrato);
 
-                                    printf("\nQual a descricao: ");
-                                    fgets(S.descricao, MAXSTR, stdin);
+                                    if (existeCnpj == -1) {
+                                        printf("\nERRO: o cnpj digitado nao foi encontrado!\n");
+                                    } else {
+                                        printf("\nQual o tipo de servico: ");
+                                        fgets(S.tipoServico, MAXSTR, stdin);
 
-                                    printf("\nQual o preco do servico: ");
-                                    scanf("%f", &S.preco);
+                                        printf("\nQual a descricao: ");
+                                        fgets(S.descricao, MAXSTR, stdin);
 
-                                    printf("\nQual a data para o servico <dd/mm/aaaa> : ");
-                                    scanf("%d%d%d", &S.D.dia, &S.D.mes, &S.D.ano);
-                                    getchar();
+                                        printf("\nQual o preco do servico: ");
+                                        scanf("%f", &S.preco);
 
-                                    salvarServico(S);
-                                    printf("\nServico cadastrado com sucesso!\n\n");
+                                        printf("\nQual a data para o servico <dd/mm/aaaa> : ");
+                                        scanf("%d%d%d", &S.D.dia, &S.D.mes, &S.D.ano);
+                                        getchar();
+
+                                        salvarServico(S);
+                                        printf("\nServico cadastrado com sucesso!\n\n");
+                                    }
+
                                 } else {
                                     servicos S_cnpj_jaCadastrado;
                                     fseek(arqSer, posSerPJ, 0);
                                     fread(&S_cnpj_jaCadastrado, sizeof(servicos), 1, arqSer);
-                                    printf("\nO CNPJ digitado: %.2s.%.3s.%.3s/%.4s-%2s ja esta com um servico pendente!", S_cnpj_jaCadastrado.cnpjParaContrato, S_cnpj_jaCadastrado.cnpjParaContrato+2, S_cnpj_jaCadastrado.cnpjParaContrato+5, S_cnpj_jaCadastrado.cnpjParaContrato+8, S_cnpj_jaCadastrado.cnpjParaContrato+12);
+                                    printf("\nO CNPJ digitado: %.2s.%.3s.%.3s/%.4s-%2s ja esta com um servico pendente!\n", S_cnpj_jaCadastrado.cnpjParaContrato, S_cnpj_jaCadastrado.cnpjParaContrato+2, S_cnpj_jaCadastrado.cnpjParaContrato+5, S_cnpj_jaCadastrado.cnpjParaContrato+8, S_cnpj_jaCadastrado.cnpjParaContrato+12);
                                 }  
                             break;
                     case 0:
@@ -563,8 +620,8 @@ void cadastroDeClientes() {
     } while (op != 0);
 }
 
-// TERMINA AQUI A FUNCAO DE CADASTROS DE USUARIOS, MAQUINARIOS, SERVICOS E PECAS --------------------------------------------
-// FUNCAO DE BUSCA DE CADASTROS DE USUARIOS, MAQUINARIOS, SERVICOS E PECAS --------------------------------------------
+// FIM DA FUNCAO DE CADASTROS -----------------------------------------------------------------------
+// INICIO DA FUNCAO DE BUSCA ------------------------------------------------------------------------
 
 void buscaDeCadastros() {
     clientesPF PF;
@@ -679,7 +736,7 @@ void buscaDeCadastros() {
                             while (fread(&PJ, sizeof(clientesPJ), 1, arqPJ) == 1 && !achou) {
                                 if (stricmp(buscCnpj, PJ.cnpj) == 0) {
                                     printf("\nDados da empresa:");
-                                    printf("\nNome: %s \nEmail: %s \nCnpj: %.2s.%.3s.%.3s/%.4s-%2s \nResponsavel: %s \nFone: (%.2s) %.5s-%.4s \n", PJ.nomeEmpresarial, PJ.emailEmpresarial, PJ.cnpj, PJ.cnpj+2, PJ.cnpj+5, PJ.cnpj+8, PJ.cnpj+12, PJ.nomeDoResponsavel, PJ.telefoneEpresarial, PJ.telefoneEpresarial+2, PJ.telefoneEpresarial+7);
+                                    printf("\nNome: %s \nEmail: %s \nCnpj: %.2s.%.3s.%.3s/%.4s-%2s \nResponsavel: %s \nFone: (%.2s) %.5s-%.4s \n", PJ.nomeEmpresarial, PJ.emailEmpresarial, PJ.cnpj, PJ.cnpj+2, PJ.cnpj+5, PJ.cnpj+8, PJ.cnpj+12, PJ.nomeDoResponsavel, PJ.telefoneEmpresarial, PJ.telefoneEmpresarial+2, PJ.telefoneEmpresarial+7);
                                     achou = 1;
                                 }
                             }
@@ -837,8 +894,8 @@ void buscaDeCadastros() {
         fclose(arqSer);
 }
 
-// TERMINA AQUI A FUNCAO DE BUSCA DE CADASTROS DE USUARIOS, MAQUINARIOS, SERVICOS E PECAS --------------------------------------------
-//EDITAR 
+// FIM DA FUNCAO DE BUSCAS ------------------------------------------------------------------------------------------
+// INICIO DA FUNCAO DE EDITAR ---------------------------------------------------------------------------------------
 
 void editarCadastros() {
 	clientesPF PF;
@@ -983,7 +1040,7 @@ void editarCadastros() {
 
                                 printf("\n----------------\n");
                                 printf("\nNome empresarial: %s", PJ.nomeEmpresarial);
-                                printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEpresarial, PJ.telefoneEpresarial+2, PJ.telefoneEpresarial+7);
+                                printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEmpresarial, PJ.telefoneEmpresarial+2, PJ.telefoneEmpresarial+7);
                                 printf("\nEmail: %s", PJ.emailEmpresarial);
                                 printf("\nNome do responsavel: %s", PJ.nomeDoResponsavel);
                                 printf("\n----------------\n");
@@ -1011,7 +1068,7 @@ void editarCadastros() {
 
                                                 printf("\n----------------\n");
                                                 printf("\nNome empresarial: %s", PJ.nomeEmpresarial);
-                                                printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEpresarial, PJ.telefoneEpresarial+2, PJ.telefoneEpresarial+7);
+                                                printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEmpresarial, PJ.telefoneEmpresarial+2, PJ.telefoneEmpresarial+7);
                                                 printf("\nEmail: %s", PJ.emailEmpresarial);
                                                 printf("\nNome do responsavel: %s", PJ.nomeDoResponsavel);
                                                 printf("\n----------------\n");
@@ -1020,7 +1077,7 @@ void editarCadastros() {
 
                                         case 2:
                                                 printf("Novo telefone: ");
-                                                scanf("%11s", PJ.telefoneEpresarial);
+                                                scanf("%11s", PJ.telefoneEmpresarial);
 
                                                 fseek(arqPJ, posCNPJ, SEEK_SET);
                                                 fwrite(&PJ, sizeof(clientesPJ), 1, arqPJ);
@@ -1033,7 +1090,7 @@ void editarCadastros() {
 
                                                 printf("\n----------------\n");
                                                 printf("\nNome empresarial: %s", PJ.nomeEmpresarial);
-                                                printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEpresarial, PJ.telefoneEpresarial+2, PJ.telefoneEpresarial+7);
+                                                printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEmpresarial, PJ.telefoneEmpresarial+2, PJ.telefoneEmpresarial+7);
                                                 printf("\nEmail: %s", PJ.emailEmpresarial);
                                                 printf("\nNome do responsavel: %s", PJ.nomeDoResponsavel);
                                                 printf("\n----------------\n");
@@ -1054,7 +1111,7 @@ void editarCadastros() {
 
                                                 printf("\n----------------\n");
                                                 printf("\nNome empresarial: %s", PJ.nomeEmpresarial);
-                                                printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEpresarial, PJ.telefoneEpresarial+2, PJ.telefoneEpresarial+7);
+                                                printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEmpresarial, PJ.telefoneEmpresarial+2, PJ.telefoneEmpresarial+7);
                                                 printf("\nEmail: %s", PJ.emailEmpresarial);
                                                 printf("\nNome do responsavel: %s", PJ.nomeDoResponsavel);
                                                 printf("\n----------------\n");
@@ -1075,7 +1132,7 @@ void editarCadastros() {
 
                                                 printf("\n----------------\n");
                                                 printf("\nNome empresarial: %s", PJ.nomeEmpresarial);
-                                                printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEpresarial, PJ.telefoneEpresarial+2, PJ.telefoneEpresarial+7);
+                                                printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEmpresarial, PJ.telefoneEmpresarial+2, PJ.telefoneEmpresarial+7);
                                                 printf("\nEmail: %s", PJ.emailEmpresarial);
                                                 printf("\nNome do responsavel: %s", PJ.nomeDoResponsavel);
                                                 printf("\n----------------\n");
@@ -1642,184 +1699,257 @@ void editarCadastros() {
     } while (op != 0);
 }
 
-//FIM EDITAR
-
-//inicio venda
 void realizarVenda() {
+    clientesPF PF;
+    //clientesPJ PJ;
     maquinarios M;
-    pecas P;
-    servicos S;
+    //pecas P;
+    //servicos S;
     vendas V;
-
-    int op, op2, pos;
-    int vendaValida = 1;
 
     FILE *arqPF = fopen("arqPF.bin", "rb+");
     FILE *arqPJ = fopen("arqPJ.bin", "rb+");
     FILE *arqMaq = fopen("arqMaquinario.bin", "rb+");
     FILE *arqPec = fopen("arqPecas.bin", "rb+");
+    FILE *arqSer = fopen("arqServicos.bin", "rb+");
+    FILE *arqVen = fopen("arqVendas.bin", "rb+");
 
-    if (arqPF && arqPJ && arqMaq && arqPec) {
-        printf("\n--- VENDA ---\n");
-        printf("1 - Cliente PF\n2 - Cliente PJ\n0 - Sair\nEscolha: ");
-        scanf("%d", &op);
-        system("cls");
-        getchar();
-        V.opCliente = op;
-
-        if (op == 1) {
-            printf("Digite o CPF do cliente: ");
-            scanf("%11s", V.cpf);
-            getchar();
-            pos = validarCPF(arqPF, V.cpf);
-            if (pos == -1) {
-                printf("\nERRO: CPF nao encontrado!\n");
-                vendaValida = 0;
-            }
-        } else if (op == 2) {
-            printf("Digite o CNPJ da empresa: ");
-            scanf("%14s", V.cnpj);
-            getchar();
-            pos = validarCNPJ(arqPJ, V.cnpj);
-            if (pos == -1) {
-                printf("\nERRO: CNPJ nao encontrado!\n");
-                vendaValida = 0;
-            }
-        } else {
-            printf("\nRetornando...\n");
-            vendaValida = 0;
-        }
-
-        if (vendaValida == 1) {
-            printf("\n--- Tipo de Venda ---\n1 - Maquinarios\n2 - Pecas\n3 - Servicos\n0 - Sair\nEscolha: ");
-            scanf("%d", &op2);
-            system("cls");
-            getchar();
-
-            if (op2 == 1) {
-                printf("Digite o codigo do maquinario: ");
-                scanf("%19s", V.codigo);
-                getchar();
-                pos = validarMaquinario(arqMaq, V.codigo);
-                if (pos != -1) {
-                    fseek(arqMaq, pos, SEEK_SET);
-                    fread(&M, sizeof(maquinarios), 1, arqMaq);
-                    printf("Quantidade desejada: ");
-                    scanf("%d", &V.qtdDesejada);
-                    if (M.quantidade >= V.qtdDesejada) {
-                        V.subtotal = V.qtdDesejada * M.preco;
-                        printf("\nResumo da venda:\nProduto: %s\nQuantidade: %d\nPreco unitario: R$ %.2f\nSubtotal: R$ %.2f\n",
-                               M.nome, V.qtdDesejada, M.preco, V.subtotal);
-                    } else {
-                        printf("\nEstoque insuficiente. Disponivel: %d\n", M.quantidade);
-                        vendaValida = 0;
-                    }
-                } else {
-                    printf("\nMaquinario nao encontrado!\n");
-                    vendaValida = 0;
-                }
-            } else if (op2 == 2) {
-                printf("Digite o codigo da peca: ");
-                scanf("%19s", V.codigo);
-                getchar();
-                pos = validarPecas(arqPec, V.codigo);
-                if (pos != -1) {
-                    fseek(arqPec, pos, SEEK_SET);
-                    fread(&P, sizeof(pecas), 1, arqPec);
-                    printf("Quantidade desejada: ");
-                    scanf("%d", &V.qtdDesejada);
-                    if (P.quantidade >= V.qtdDesejada) {
-                        V.subtotal = V.qtdDesejada * P.preco;
-                        printf("\nResumo da venda:\nProduto: %s\nQuantidade: %d\nPreco unitario: R$ %.2f\nSubtotal: R$ %.2f\n",
-                               P.nome, V.qtdDesejada, P.preco, V.subtotal);
-                    } else {
-                        printf("\nEstoque insuficiente. Disponivel: %d\n", P.quantidade);
-                        vendaValida = 0;
-                    }
-                } else {
-                    printf("\nPeca nao encontrada!\n");
-                    vendaValida = 0;
-                }
-            } else if (op2 == 3) {
-                printf("Descricao do servico: ");
-                fgets(S.descricao, MAXSTR, stdin);
-                S.descricao[strcspn(S.descricao, "\n")] = '\0';
-                printf("Tipo do servico: ");
-                fgets(S.tipoServico, MAXSTR, stdin);
-                S.tipoServico[strcspn(S.tipoServico, "\n")] = '\0';
-                printf("Preco do servico: ");
-                scanf("%f", &S.preco);
-                printf("Data do servico (dd mm aaaa): ");
-                scanf("%d %d %d", &S.D.dia, &S.D.mes, &S.D.ano);
-                getchar();
-                if (V.opCliente == 1)
-                    strcpy(S.cpfParaContrato, V.cpf);
-                else
-                    strcpy(S.cnpjParaContrato, V.cnpj);
-                salvarServico(S);
-                printf("\nServico cadastrado e venda finalizada!\n");
-                vendaValida = 0;
-            } else {
-                printf("\nRetornando...\n");
-                vendaValida = 0;
-            }
-        }
-
-        if (vendaValida == 1) {
-            printf("\nForma de pagamento:\n1 - Pix (10%% desconto)\n2 - Boleto (5%% acrescimo)\n3 - Financiamento (10%% acrescimo)\nEscolha: ");
-            scanf("%d", &V.formaPagamento);
-            if (V.formaPagamento == 1)
-                V.totalFinal = V.subtotal * 0.90;
-            else if (V.formaPagamento == 2)
-                V.totalFinal = V.subtotal * 1.05;
-            else if (V.formaPagamento == 3)
-                V.totalFinal = V.subtotal * 1.10;
-            else {
-                printf("\nOpcao invalida. Venda cancelada.\n");
-                vendaValida = 0;
-            }
-        }
-
-        if (vendaValida == 1) {
-            printf("Valor final: R$ %.2f\nDeseja finalizar a venda?\n1 - Sim\n2 - Nao\nEscolha: ", V.totalFinal);
-            scanf("%d", &V.confirmar);
-            if (V.confirmar != 1) {
-                printf("\nVenda cancelada pelo usuario.\n");
-                vendaValida = 0;
-            }
-        }
-
-        if (vendaValida == 1) {
-            printf("Data da venda (dd mm aaaa): ");
-            scanf("%d %d %d", &V.D.dataVendaDia, &V.D.dataVendaMes, &V.D.dataVendaAno);
-            if (op2 == 1) {
-                M.quantidade -= V.qtdDesejada;
-                fseek(arqMaq, pos, SEEK_SET);
-                fwrite(&M, sizeof(maquinarios), 1, arqMaq);
-            } else if (op2 == 2) {
-                P.quantidade -= V.qtdDesejada;
-                fseek(arqPec, pos, SEEK_SET);
-                fwrite(&P, sizeof(pecas), 1, arqPec);
-            }
-            printf("\nVenda finalizada com sucesso!\n");
-        }
-
-        system("pause");
-        fclose(arqPF);
-        fclose(arqPJ);
-        fclose(arqMaq);
-        fclose(arqPec);
-    } else {
-        printf("\nERRO ao abrir arquivos.\n");
-        if (arqPF) fclose(arqPF);
-        if (arqPJ) fclose(arqPJ);
-        if (arqMaq) fclose(arqMaq);
-        if (arqPec) fclose(arqPec);
+    if (!arqPF || !arqPJ || !arqMaq || !arqPec || !arqSer || !arqVen) {
+        printf("Erro ao abrir arquivos necessários.\n");
+        return;
     }
+
+    int op, op2, pos, posMaq;
+
+    
+    do {
+        printf("\n--- VENDAS ---\n");
+        printf("\n1 - Cliente PF");
+        printf("\n2 - Cliente PJ");
+        printf("\n0 - Retornar ao menu");
+        printf("\nEscolha: ");
+        scanf("%d", &op);
+
+        switch (op) {
+        case 1:
+                printf("\n--- VENDAS CLIENTE PF ---\n");
+                printf("\n1 - Maquinario");
+                printf("\n2 - Pecas");
+                printf("\n0 - Retornar");
+                printf("\nEscolha: ");
+                scanf("%d", &op2);
+
+                switch (op2)
+                {
+                case 1:
+                        system("cls");
+                        printf("\n--- LOJA DE MAQUINARIO ---\n");
+                        printf("\nDigite seu cpf: ");
+                        scanf("%11s", V.cpfVenda);
+
+                        printf("\nDigite o codigo do maquinario: ");
+                        scanf("%19s", V.codigoVenda);
+                        getchar();
+
+                        pos = validarCPF(arqPF, V.cpfVenda);
+                        posMaq = validarMaquinario(arqMaq, V.codigoVenda);
+
+                        if (pos == -1 || posMaq == -1) {
+                            printf("\nERRO: Um dos dados nao exite no cadastro!\n");
+                        } else {
+                            system("cls");
+                            fseek(arqPF, pos, SEEK_SET);
+                            fread(&PF, sizeof(clientesPF), 1, arqPF);
+
+                            fseek(arqMaq, posMaq, SEEK_SET);
+                            fread(&M, sizeof(maquinarios), 1, arqMaq);
+
+                            printf("\nDados do cliente: ");
+                            printf("\n----------------");
+                            printf("\nNome: %s", PF.nome);
+                            printf("\nTelefone: (%.2s) %.5s-%.4s", PF.telefone, PF.telefone+2, PF.telefone+7);
+                            printf("\nEmail: %s", PF.email);
+                            printf("\nData de nascimento: %02d/%02d/%04d", PF.D.dia, PF.D.mes, PF.D.ano);
+                            printf("\n----------------\n");
+                            
+                            printf("\nDados do maquinario: ");
+                            printf("\n----------------");
+                            printf("\nNome do maquinario: %s", M.nome);
+                            printf("\nCategoria: %s", M.categoria);
+                            printf("\nQuantidade: %d", M.quantidade);
+                            printf("\nPreco: %.2f", M.preco);
+                            printf("\n----------------\n");
+
+                            printf("\nDigite a quantidade da compra: ");
+                            scanf("%d" , &V.quantDesejada);
+                            getchar();
+
+                            if (V.quantDesejada > M.quantidade) {
+                                printf("Estoque insuficiente!\n");
+                            } else {
+                                V.precoParaPagar = V.quantDesejada * M.preco;   
+                                
+                                printf("\n--- FORMA DE PAGAMENTO ---\n");
+                                printf("\n1 - Pix (10%% off)");
+                                printf("\n2 - Boleto (+5%%)");
+                                printf("\n3 - Financiamento (+10%%)");
+                                printf("\nEscolha: ");
+                                scanf("%d", &V.formaPagamento);
+
+                                if (V.formaPagamento == 1)
+                                    V.precoFinalPagar = V.precoParaPagar * 0.9;
+                                else if (V.formaPagamento == 2)
+                                    V.precoFinalPagar = V.precoParaPagar * 1.05;
+                                else if (V.formaPagamento == 3)
+                                    V.precoFinalPagar = V.precoParaPagar * 1.10;
+
+                                printf("\nTotal da compra: %.2f\n", V.precoFinalPagar);
+                                printf("\nData da venda (dd mm aaaa): ");
+                                scanf("%d %d %d", &V.D.dataVendaDia, &V.D.dataVendaMes, &V.D.dataVendaAno);
+
+                                salvarVendas(V);
+
+                                M.quantidade -= V.quantDesejada;
+                                fseek(arqMaq, posMaq, SEEK_SET);
+                                fwrite(&M, sizeof(maquinarios), 1, arqMaq);
+                                printf("\nVenda registrada com sucesso!\n");
+                            }
+                        }
+
+                    break;
+                case 0:
+                        printf("\nRetornando...");
+                    break;
+                
+                default:
+                        printf("\nERRO: escolha uma opcao valida!\n");
+                    break;
+                }
+                
+            break;
+        case 0:
+                printf("\nRetornando...");
+            break;
+
+        default:
+                printf("\nERRO: escolha uma opcao valida!\n");
+            break;
+        }
+    } while (op != 0);
 }
 
-//fim venda
-// MAIN DO PROGRAMA INTEIRO DO PROJETO --------------------------------------------
+void realizarExclusao() {
+    clientesPF PF;
+    //clientesPJ PJ;
+    //maquinarios M;
+    //pecas P;
+    //servicos S;
+    //vendas V;
+
+    FILE *arqPF = fopen("arqPF.bin", "rb+");
+    FILE *arqPJ = fopen("arqPJ.bin", "rb+");
+    FILE *arqMaq = fopen("arqMaquinario.bin", "rb+");
+    FILE *arqPec = fopen("arqPecas.bin", "rb+");
+    FILE *arqSer = fopen("arqServicos.bin", "rb+");
+    FILE *arqVen = fopen("arqVendas.bin", "rb+");
+
+    if (!arqPF || !arqPJ || !arqMaq || !arqPec || !arqSer || !arqVen) {
+        printf("Erro ao abrir arquivos necessários.\n");
+        return;
+    }
+
+    int op, op2, pos, posVen;
+    char cpfApagar[12];
+
+    do {
+        printf("\n--- EXCLUSAO ---\n");
+        printf("\n1 - Clientes");
+        printf("\n2 - Produtos");
+        printf("\n3 - Servicos");
+        printf("\n0 - Retornar ao menu");
+        printf("\nEscolha: ");
+        scanf("%d", &op);
+
+        switch (op) {
+        case 1:
+                printf("\n--- EXCLUIR CLIENTES ---\n");
+                printf("\n1 - Cliente PF");
+                printf("\n2 - Cliente PJ");
+                printf("\n0 - Retornar");
+                printf("\nEscolha: ");
+                scanf("%d", &op2);
+
+                switch (op2) {
+                case 1:
+                        system("cls");
+                        printf("\n--- EXCLUIR CLIENTE PF ---\n");
+                        printf("\nDigite o cpf: ");
+                        scanf("%11s", cpfApagar);
+                        getchar();
+
+                        pos = validarCPF(arqPF, cpfApagar);
+
+                        if (pos == -1) {
+                            printf("\nERRO: o cpf digitado ainda nao foi cadastrado!\n");
+                        } else {
+                            fseek(arqPF, pos, SEEK_SET);
+                            fread(&PF, sizeof(clientesPF), 1, arqPF);
+
+                            printf("\nDados do cliente: ");
+                            printf("\n----------------");
+                            printf("\nNome: %s", PF.nome);
+                            printf("\nTelefone: (%.2s) %.5s-%.4s", PF.telefone, PF.telefone+2, PF.telefone+7);
+                            printf("\nEmail: %s", PF.email);
+                            printf("\nData de nascimento: %02d/%02d/%04d", PF.D.dia, PF.D.mes, PF.D.ano);
+                            printf("\n----------------\n");
+
+                            posVen = validarVendasPF(arqVen, cpfApagar);
+
+                            if (posVen == -1) {
+                                printf("\nDeseja reamente excluir esse cliente? <S/N>: ");
+
+                                if (toupper(getche()) == 'S') {
+                                    FILE *temp = fopen("arqTemp.bin", "wb");
+
+                                    if(temp == NULL) {
+                                        printf("\nERRO: impossivel criar arquivo temp!\n");
+                                    }
+
+                                    rewind(arqPF);
+                                    while (fread(&PF, sizeof(clientesPF), 1, arqPF) == 1) {
+                                        if(stricmp(cpfApagar, PF.cpf) != 0) {
+                                            fwrite(&PF, sizeof(clientesPF), 1, temp);
+                                        }
+                                    }
+                                    fclose(arqPF);
+                                    fclose(temp);
+                                    remove("arqPF.bin");
+                                    rename("arqTemp.bin", "arqPF.bin");
+                                    
+                                    printf("\nCliente Excluido!\n");
+                                }
+
+                            } else {
+                                printf("\nNao e possivel excluir um cliente com uma compra registrada\n");
+                            }
+                        }
+                    break;
+                
+                default:
+                        printf("\nERRO: escolha uma opcao valida!\n");
+                    break;
+                }
+            break;
+        
+        default:
+                printf("\nERRO: escolha uma opcao valida!\n");
+            break;
+        }
+
+
+
+    } while (op != 0);
+}
 
 int main() {
     int op;
@@ -1831,6 +1961,7 @@ int main() {
         printf("\n3 - Editar");
         printf("\n4 - Realizar venda");
         printf("\n5 - Excluir");
+        printf("\n6 - Relatorios");
         printf("\n0 - Sair");
         printf("\nEscolha: ");
         scanf("%d", &op);
@@ -1850,6 +1981,12 @@ int main() {
         case 4:
                 realizarVenda();
             break;
+        case 5:
+                realizarExclusao();
+            break;
+        case 6:
+    			//relatorios();
+    		break;
         case 0:
                 printf("\nEncerrando...");
             break;
@@ -1862,5 +1999,3 @@ int main() {
 
     return 0;
 }
-
-// TERMINA AQUI O MAIN DO PROGRAMA INTEIRO DO PROJETO --------------------------------------------
