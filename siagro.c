@@ -488,7 +488,7 @@ void cadastroDeClientes() {
                                     getchar();
 
                                     salvarPecas(P);
-                                    printf("\nMaquinario cadastrado com sucesso!\n\n");
+                                    printf("\nPeca cadastrado com sucesso!\n\n");
                                 } else {
                                     pecas PEC_ja_cadastrado;
                                     fseek(arqPec, posPec, 0);
@@ -610,14 +610,14 @@ void cadastroDeClientes() {
                 } while (op != 0);
 
             } while (op != 0);
-
-        fclose(arqPF);
-        fclose(arqPJ);
-        fclose(arqMaq);
-        fclose(arqPec);
-        fclose(arqSer);
-
     } while (op != 0);
+    
+    fclose(arqPF);
+    fclose(arqPJ);
+    fclose(arqMaq);
+    fclose(arqPec);
+    fclose(arqSer);
+    fclose(arqVen);
 }
 
 // FIM DA FUNCAO DE CADASTROS -----------------------------------------------------------------------
@@ -887,11 +887,11 @@ void buscaDeCadastros() {
 
     } while (op != 0);
     	
-        fclose(arqPF);
-        fclose(arqPJ);
-        fclose(arqMaq);
-        fclose(arqPec);
-        fclose(arqSer);
+    fclose(arqPF);
+    fclose(arqPJ);
+    fclose(arqMaq);
+    fclose(arqPec);
+    fclose(arqSer);
 }
 
 // FIM DA FUNCAO DE BUSCAS ------------------------------------------------------------------------------------------
@@ -1361,7 +1361,7 @@ void editarCadastros() {
 
                                         case 2:
                                                 printf("Nova categoria: ");
-                                                fgets(M.categoria, MAXSTR, stdin);
+                                                fgets(P.categoria, MAXSTR, stdin);
 
                                                 fseek(arqPec, posPec, SEEK_SET);
                                                 fwrite(&P, sizeof(pecas), 1, arqPec);
@@ -1382,7 +1382,7 @@ void editarCadastros() {
                                             break;
                                         case 3:
                                                 printf("Nova quantidade: ");
-                                                scanf("%d", &M.quantidade);
+                                                scanf("%d", &P.quantidade);
                                                 getchar();
 
                                                 fseek(arqPec, posPec, SEEK_SET);
@@ -1404,7 +1404,7 @@ void editarCadastros() {
                                             break;
                                         case 4:
                                                 printf("Novo preco: ");
-                                                scanf("%f", &M.preco);
+                                                scanf("%f", &P.preco);
                                                 getchar();
 
                                                 fseek(arqPec, posPec, SEEK_SET);
@@ -1690,20 +1690,20 @@ void editarCadastros() {
             printf("\nERRO: escolha uma opcao valida!\n");
             break;
         }
-	
-		fclose(arqPF);
-        fclose(arqPJ);
-        fclose(arqMaq);
-        fclose(arqPec);
-        fclose(arqSer);
     } while (op != 0);
+
+    fclose(arqPF);
+    fclose(arqPJ);
+    fclose(arqMaq);
+    fclose(arqPec);
+    fclose(arqSer);
 }
 
 void realizarVenda() {
     clientesPF PF;
-    //clientesPJ PJ;
+    clientesPJ PJ;
     maquinarios M;
-    //pecas P;
+    pecas P;
     //servicos S;
     vendas V;
 
@@ -1719,8 +1719,7 @@ void realizarVenda() {
         return;
     }
 
-    int op, op2, pos, posMaq;
-
+    int op, op2, pos, posMaq, posPec;
     
     do {
         printf("\n--- VENDAS ---\n");
@@ -1795,6 +1794,7 @@ void realizarVenda() {
                                 printf("\n3 - Financiamento (+10%%)");
                                 printf("\nEscolha: ");
                                 scanf("%d", &V.formaPagamento);
+                                getchar();
 
                                 if (V.formaPagamento == 1)
                                     V.precoFinalPagar = V.precoParaPagar * 0.9;
@@ -1806,12 +1806,91 @@ void realizarVenda() {
                                 printf("\nTotal da compra: %.2f\n", V.precoFinalPagar);
                                 printf("\nData da venda (dd mm aaaa): ");
                                 scanf("%d %d %d", &V.D.dataVendaDia, &V.D.dataVendaMes, &V.D.dataVendaAno);
+                                getchar();
 
                                 salvarVendas(V);
 
                                 M.quantidade -= V.quantDesejada;
                                 fseek(arqMaq, posMaq, SEEK_SET);
-                                fwrite(&M, sizeof(maquinarios), 1, arqMaq);
+                                fwrite(&M, sizeof(maquinarios), 1, arqMaq); fflush(arqMaq);
+                                printf("\nVenda registrada com sucesso!\n");
+                                printf("\nDEBUG -> Quantidade apos salvar: %d\n", M.quantidade);
+                            }
+                        }
+
+                    break;
+                case 2:
+                        system("cls");
+                        printf("\n--- LOJA DE PECAS ---\n");
+                        printf("\nDigite seu cpf: ");
+                        scanf("%11s", V.cpfVenda);
+                        
+                        printf("\nDigite o codigo da peca: ");
+                        scanf("%19s", V.codigoVenda);
+                        getchar();
+
+                        pos = validarCPF(arqPF, V.cpfVenda);
+                        posPec = validarPecas(arqPec, V.codigoVenda);
+
+                        if(pos == -1 || posPec == -1) {
+                            printf("\nERRO: Um dos dados nao exite no cadastro!\n");
+                        } else {
+                            system("cls");
+                            fseek(arqPF, pos, SEEK_SET);
+                            fread(&PF, sizeof(clientesPF), 1, arqPF);
+
+                            fseek(arqPec, posPec, SEEK_SET);
+                            fread(&P, sizeof(pecas), 1, arqPec);
+
+                            printf("\nDados do cliente: ");
+                            printf("\n----------------");
+                            printf("\nNome: %s", PF.nome);
+                            printf("\nTelefone: (%.2s) %.5s-%.4s", PF.telefone, PF.telefone+2, PF.telefone+7);
+                            printf("\nEmail: %s", PF.email);
+                            printf("\nData de nascimento: %02d/%02d/%04d", PF.D.dia, PF.D.mes, PF.D.ano);
+                            printf("\n----------------\n");
+
+                            printf("\n----------------\n");
+                            printf("\nNome da peca: %s", P.nome);
+                            printf("\nCategoria: %s", P.categoria);
+                            printf("\nQuantidade: %d", P.quantidade);
+                            printf("\nPreco: %.2f", P.preco);
+                            printf("\n----------------\n");
+
+                            printf("\nDigite a quantidade desejada: ");
+                            scanf("%d", &V.quantDesejada);
+                            getchar();
+
+                            if (V.quantDesejada > P.quantidade) {
+                                printf("Estoque insuficiente!\n");
+                            } else {
+                                V.precoParaPagar = V.quantDesejada * P.preco;
+
+                                printf("\n--- FORMA DE PAGAMENTO ---\n");
+                                printf("\n1 - Pix (10%% off)");
+                                printf("\n2 - Boleto (+5%%)");
+                                printf("\n3 - Financiamento (+10%%)");
+                                printf("\nEscolha: ");
+                                scanf("%d", &V.formaPagamento);
+                                getchar();
+                                
+                                if (V.formaPagamento == 1)
+                                    V.precoFinalPagar = V.precoParaPagar * 0.9;
+                                else if (V.formaPagamento == 2)
+                                    V.precoFinalPagar = V.precoParaPagar * 1.05;
+                                else if (V.formaPagamento == 3)
+                                    V.precoFinalPagar = V.precoParaPagar * 1.10;
+
+                                printf("\nTotal da compra: %.2f\n", V.precoFinalPagar);
+                                printf("\nData da venda (dd mm aaaa): ");
+                                scanf("%d %d %d", &V.D.dataVendaDia, &V.D.dataVendaMes, &V.D.dataVendaAno);
+                                getchar();
+
+                                salvarVendas(V);
+
+                                P.quantidade -= V.quantDesejada;
+                                fseek(arqPec, posPec, SEEK_SET);
+                                fwrite(&P, sizeof(pecas), 1, arqPec); fflush(arqPec);
                                 printf("\nVenda registrada com sucesso!\n");
                             }
                         }
@@ -1825,7 +1904,183 @@ void realizarVenda() {
                         printf("\nERRO: escolha uma opcao valida!\n");
                     break;
                 }
+            break;
+        case 2:
+                printf("\n--- VENDAS CLIENTE PJ ---\n");
+                printf("\n1 - Maquinario");
+                printf("\n2 - Pecas");
+                printf("\n0 - Retornar");
+                printf("\nEscolha: ");
+                scanf("%d", &op2);
+
+                switch (op2)
+                {
+                case 1:
+                        system("cls");
+                        printf("\n--- LOJA DE MAQUINARIO ---\n");
+                        printf("\nDigite seu cnpj: ");
+                        scanf("%14s", V.cnpjVenda);
+                        strcpy(V.cpfVenda, "");
+
+                        printf("\nDigite o codigo do maquinario: ");
+                        scanf("%19s", V.codigoVenda);
+                        getchar();
+
+                        pos = validarCNPJ(arqPJ, V.cnpjVenda);
+                        posMaq = validarMaquinario(arqMaq, V.codigoVenda);
+
+                        if (pos == -1 || posMaq == -1) {
+                            printf("\nERRO: Um dos dados nao exite no cadastro!\n");
+                        } else {
+                            system("cls");
+                            fseek(arqPJ, pos, SEEK_SET);
+                            fread(&PJ, sizeof(clientesPJ), 1, arqPJ);
+
+                            fseek(arqMaq, posMaq, SEEK_SET);
+                            fread(&M, sizeof(maquinarios), 1, arqMaq);
+
+                            printf("\nDados do cliente: ");
+                            printf("\n----------------\n");
+                            printf("\nNome empresarial: %s", PJ.nomeEmpresarial);
+                            printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEmpresarial, PJ.telefoneEmpresarial+2, PJ.telefoneEmpresarial+7);
+                            printf("\nEmail: %s", PJ.emailEmpresarial);
+                            printf("\nNome do responsavel: %s", PJ.nomeDoResponsavel);
+                            printf("\n----------------\n");
+                            
+                            printf("\nDados do maquinario: ");
+                            printf("\n----------------");
+                            printf("\nNome do maquinario: %s", M.nome);
+                            printf("\nCategoria: %s", M.categoria);
+                            printf("\nQuantidade: %d", M.quantidade);
+                            printf("\nPreco: %.2f", M.preco);
+                            printf("\n----------------\n");
+
+                            printf("\nDigite a quantidade da compra: ");
+                            scanf("%d" , &V.quantDesejada);
+                            getchar();
+
+                            if (V.quantDesejada > M.quantidade) {
+                                printf("Estoque insuficiente!\n");
+                            } else {
+                                V.precoParaPagar = V.quantDesejada * M.preco;   
+                                
+                                printf("\n--- FORMA DE PAGAMENTO ---\n");
+                                printf("\n1 - Pix (10%% off)");
+                                printf("\n2 - Boleto (+5%%)");
+                                printf("\n3 - Financiamento (+10%%)");
+                                printf("\nEscolha: ");
+                                scanf("%d", &V.formaPagamento);
+                                getchar();
+
+                                if (V.formaPagamento == 1)
+                                    V.precoFinalPagar = V.precoParaPagar * 0.9;
+                                else if (V.formaPagamento == 2)
+                                    V.precoFinalPagar = V.precoParaPagar * 1.05;
+                                else if (V.formaPagamento == 3)
+                                    V.precoFinalPagar = V.precoParaPagar * 1.10;
+
+                                printf("\nTotal da compra: %.2f\n", V.precoFinalPagar);
+                                printf("\nData da venda (dd mm aaaa): ");
+                                scanf("%d %d %d", &V.D.dataVendaDia, &V.D.dataVendaMes, &V.D.dataVendaAno);
+                                getchar();
+
+                                salvarVendas(V);
+
+                                M.quantidade -= V.quantDesejada;
+                                fseek(arqMaq, posMaq, SEEK_SET); fflush(arqMaq);
+                                fwrite(&M, sizeof(maquinarios), 1, arqMaq);
+                                printf("\nVenda registrada com sucesso!\n");
+                            }
+                        }
+
+                    break;
+                case 2:
+                        system("cls");
+                        printf("\n--- LOJA DE PECAS ---\n");
+                        printf("\nDigite seu cnpj: ");
+                        scanf("%14s", V.cnpjVenda);
+                        strcpy(V.cpfVenda, "");
+                        
+                        printf("\nDigite o codigo da peca: ");
+                        scanf("%19s", V.codigoVenda);
+                        getchar();
+
+                        pos = validarCNPJ(arqPJ, V.cnpjVenda);
+                        posPec = validarPecas(arqPec, V.codigoVenda);
+
+                        if(pos == -1 || posPec == -1) {
+                            printf("\nERRO: Um dos dados nao exite no cadastro!\n");
+                        } else {
+                            system("cls");
+                            fseek(arqPJ, pos, SEEK_SET);
+                            fread(&PJ, sizeof(clientesPJ), 1, arqPJ);
+
+                            fseek(arqPec, posPec, SEEK_SET);
+                            fread(&P, sizeof(pecas), 1, arqPec);
+
+                            printf("\nDados do cliente: ");
+                            printf("\n----------------\n");
+                            printf("\nNome empresarial: %s", PJ.nomeEmpresarial);
+                            printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEmpresarial, PJ.telefoneEmpresarial+2, PJ.telefoneEmpresarial+7);
+                            printf("\nEmail: %s", PJ.emailEmpresarial);
+                            printf("\nNome do responsavel: %s", PJ.nomeDoResponsavel);
+                            printf("\n----------------\n");
+
+                            printf("\nDados da peca: ");
+                            printf("\n----------------\n");
+                            printf("\nNome da peca: %s", P.nome);
+                            printf("\nCategoria: %s", P.categoria);
+                            printf("\nQuantidade: %d", P.quantidade);
+                            printf("\nPreco: %.2f", P.preco);
+                            printf("\n----------------\n");
+
+                            printf("\nDigite a quantidade desejada: ");
+                            scanf("%d", &V.quantDesejada);
+                            getchar();
+
+                            if (V.quantDesejada > P.quantidade) {
+                                printf("Estoque insuficiente!\n");
+                            } else {
+                                V.precoParaPagar = V.quantDesejada * P.preco;
+
+                                printf("\n--- FORMA DE PAGAMENTO ---\n");
+                                printf("\n1 - Pix (10%% off)");
+                                printf("\n2 - Boleto (+5%%)");
+                                printf("\n3 - Financiamento (+10%%)");
+                                printf("\nEscolha: ");
+                                scanf("%d", &V.formaPagamento);
+                                getchar();
+                                
+                                if (V.formaPagamento == 1)
+                                    V.precoFinalPagar = V.precoParaPagar * 0.9;
+                                else if (V.formaPagamento == 2)
+                                    V.precoFinalPagar = V.precoParaPagar * 1.05;
+                                else if (V.formaPagamento == 3)
+                                    V.precoFinalPagar = V.precoParaPagar * 1.10;
+
+                                printf("\nTotal da compra: %.2f\n", V.precoFinalPagar);
+                                printf("\nData da venda (dd mm aaaa): ");
+                                scanf("%d %d %d", &V.D.dataVendaDia, &V.D.dataVendaMes, &V.D.dataVendaAno);
+                                getchar();
+
+                                salvarVendas(V);
+
+                                P.quantidade -= V.quantDesejada;
+                                fseek(arqPec, posPec, SEEK_SET);
+                                fwrite(&P, sizeof(pecas), 1, arqPec); fflush(arqPec);
+                                printf("\nVenda registrada com sucesso!\n");
+                            }
+                        }
+
+                    break;
+                case 0:
+                        printf("\nRetornando...");
+                    break;
                 
+                default:
+                        printf("\nERRO: escolha uma opcao valida!\n");
+                    break;
+                }
             break;
         case 0:
                 printf("\nRetornando...");
@@ -1945,10 +2200,14 @@ void realizarExclusao() {
                 printf("\nERRO: escolha uma opcao valida!\n");
             break;
         }
-
-
-
     } while (op != 0);
+
+    fclose(arqPF);
+    fclose(arqPJ);
+    fclose(arqMaq);
+    fclose(arqPec);
+    fclose(arqSer);
+    fclose(arqVen);
 }
 
 int main() {
