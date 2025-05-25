@@ -235,6 +235,19 @@ int validarVendasPF(FILE *arqVen, char cpf[]) {
     return -1;
 }
 
+int validarVendasPJ(FILE *arqVen, char cnpj[]) {
+    vendas V;
+
+    rewind(arqVen);
+    while (fread(&V, sizeof(vendas), 1, arqVen) == 1) {
+        if(stricmp(cnpj, V.cnpjVenda) == 0) {
+            return(ftell(arqVen) - sizeof(vendas));
+        }
+    }
+
+    return -1;
+}
+
 // TERMINA AQUI AS FUNCOES DE VALIDAR CPF E CNPJ EM ARQUIVOS BINARIOS --------------------------------------------
 // INICIO DA FUNCAO DE CADASTROS ---------------------------------------------------------------------------------
 
@@ -1894,6 +1907,17 @@ void realizarVenda() {
                                 printf("\nVenda registrada com sucesso!\n");
                             }
                         }
+                    break;
+                case 3:
+                        system("cls");
+                        printf("\n--- LOJA DE SERVICOS ---\n");
+                        printf("\nDigite seu cpf: ");
+                        scanf("%11s", PF.cpf);
+
+                        printf("\n");
+
+
+                    break;
 
                     break;
                 case 0:
@@ -2095,7 +2119,7 @@ void realizarVenda() {
 
 void realizarExclusao() {
     clientesPF PF;
-    //clientesPJ PJ;
+    clientesPJ PJ;
     //maquinarios M;
     //pecas P;
     //servicos S;
@@ -2114,7 +2138,7 @@ void realizarExclusao() {
     }
 
     int op, op2, pos, posVen;
-    char cpfApagar[12];
+    char cpfApagar[12], cnpjApagar[14];
 
     do {
         printf("\n--- EXCLUSAO ---\n");
@@ -2189,11 +2213,68 @@ void realizarExclusao() {
                             }
                         }
                     break;
+                case 2:
+                        system("cls");
+                        printf("\n--- EXCLUIR CLIENTE PJ ---\n");
+                        printf("\nDigite o cnpj: ");
+                        scanf("%14s", cnpjApagar);
+
+                        pos = validarCNPJ(arqPJ, cnpjApagar);
+
+                        if (pos == -1) {
+                            printf("\nERRO: o cnpj digitado ainda nao foi cadastrado!\n");
+                        } else {
+                            fseek(arqPJ, pos, SEEK_SET);
+                            fread(&PJ, sizeof(clientesPJ), 1, arqPJ);
+
+                            printf("\n----------------\n");
+                            printf("\nNome empresarial: %s", PJ.nomeEmpresarial);
+                            printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEmpresarial, PJ.telefoneEmpresarial+2, PJ.telefoneEmpresarial+7);
+                            printf("\nEmail: %s", PJ.emailEmpresarial);
+                            printf("\nNome do responsavel: %s", PJ.nomeDoResponsavel);
+                            printf("\n----------------\n");
+
+                            posVen = validarVendasPJ(arqVen, cnpjApagar);
+
+                            if (posVen == -1) {
+                                printf("\nDeseja reamente excluir esse cliente? <S/N>: ");
+
+                                if(toupper(getche()) == 'S') {
+                                    FILE *temp = fopen("arqTemp.bin", "wb");
+
+                                    if (temp == NULL) {
+                                        printf("\nERRO: impossivel criar arquivo temp!\n");
+                                    }
+
+                                    rewind(arqPJ);
+                                    while (fread(&PJ, sizeof(clientesPJ), 1, arqPJ) == 1) {
+                                        if (strcmp(cnpjApagar, PJ.cnpj) != 0) {
+                                            fwrite(&PJ, sizeof(arqPJ), 1, temp);
+                                        }
+                                    }
+                                    fclose(arqPJ);
+                                    fclose(temp);
+                                    remove("arqPJ.bin");
+                                    rename("arqTemp.bin", "arqPJ.bin");
+
+                                    printf("\nCliente Excluido!\n");
+                                }
+                            } else {
+                                printf("\nNao e possivel excluir um cliente com uma compra registrada\n");
+                            }
+                        } 
+                    break;
+                case 0:
+                        printf("\nRetornando...\n");
+                    break;
                 
                 default:
                         printf("\nERRO: escolha uma opcao valida!\n");
                     break;
                 }
+            break;
+        case 2:
+                
             break;
         
         default:
