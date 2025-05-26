@@ -1,0 +1,19 @@
+FILE *temp = fopen("arqTemp.bin", "wb");
+
+                            if(temp == NULL) {
+                                printf("\nERRO: impossivel criar arquivo temp!\n");
+                            }
+
+                            rewind(arqMaq);
+                            while (fread(&M, sizeof(maquinarios), 1, arqMaq) == 1) {
+                                if (strcmp(codigoApagar, M.codigo) != 0) {
+                                    fwrite(&M, sizeof(maquinarios), 1, temp);
+                                }
+                                
+                                fclose(arqMaq);
+                                fclose(temp);
+                                remove("arqMaq.bin");
+                                rename("arqTemp.bin", "arqMaq.bin");
+
+                                printf("\nCliente Excluido!\n");
+                            } 
