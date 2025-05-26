@@ -2734,7 +2734,7 @@ int main() {
                 realizarExclusao();
             break;
         case 6:
-    			//relatorios();
+    			relatorios();
     		break;
         case 0:
                 printf("\nEncerrando...");
