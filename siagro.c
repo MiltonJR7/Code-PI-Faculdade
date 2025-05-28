@@ -2298,25 +2298,28 @@ void realizarExclusao() {
                             posVen = validarVendasPF(arqVen, cpfApagar);
 
                             if (posVen == -1) {
-                                printf("\nDeseja reamente excluir esse cliente? <S/N>: ");
+                                printf("\nDeseja realmente excluir esse cliente? <S/N>: ");
 
                                 if (toupper(getche()) == 'S') {
                                     FILE *temp = fopen("arqTemp.bin", "wb");
 
                                     if(temp == NULL) {
                                         printf("\nERRO: impossivel criar arquivo temp!\n");
-                                    }
+                                    } else {
+                                        rewind(arqPF);
 
-                                    rewind(arqPF);
-                                    while (fread(&PF, sizeof(clientesPF), 1, arqPF) == 1) {
-                                        if(stricmp(cpfApagar, PF.cpf) != 0) {
-                                            fwrite(&PF, sizeof(clientesPF), 1, temp);
+                                        while (fread(&PF, sizeof(clientesPF), 1, arqPF) == 1) {
+                                            if(stricmp(cpfApagar, PF.cpf) != 0) {
+                                                fwrite(&PF, sizeof(clientesPF), 1, temp);
+                                            }
                                         }
                                     }
+                                    
                                     fclose(arqPF);
                                     fclose(temp);
                                     remove("arqPF.bin");
                                     rename("arqTemp.bin", "arqPF.bin");
+                                    arqPF = fopen("arqPF.bin", "rb+");
                                     
                                     printf("\nCliente Excluido!\n");
                                     printf("\n");
@@ -2358,7 +2361,7 @@ void realizarExclusao() {
                             posVen = validarVendasPJ(arqVen, cnpjApagar);
 
                             if (posVen == -1) {
-                                printf("\nDeseja reamente excluir esse cliente? <S/N>: ");
+                                printf("\nDeseja realmente excluir esse cliente? <S/N>: ");
 
                                 if(toupper(getche()) == 'S') {
                                     FILE *temp = fopen("arqTemp.bin", "wb");
@@ -2366,6 +2369,8 @@ void realizarExclusao() {
                                     if (temp == NULL) {
                                         printf("\nERRO: impossivel criar arquivo temp!\n");
                                     } else {
+                                        rewind(arqPJ);
+
                                         while (fread(&PJ, sizeof(clientesPJ), 1, arqPJ) == 1) {
                                             if (strcmp(cnpjApagar, PJ.cnpj) != 0) {
                                                 fwrite(&PJ, sizeof(clientesPJ), 1, temp);
@@ -2377,6 +2382,7 @@ void realizarExclusao() {
                                     fclose(temp);
                                     remove("arqPJ.bin");
                                     rename("arqTemp.bin", "arqPJ.bin");
+                                    arqPJ = fopen("arqPJ.bin", "rb+");
 
                                     printf("\nCliente Excluido!\n");
                                     system("pause");
@@ -2433,7 +2439,7 @@ void realizarExclusao() {
                             printf("\n----------------\n");
 
                             if(M.quantidade == 0) {
-                                printf("\nDeseja reamente excluir esse produto? <S/N>: ");
+                                printf("\nDeseja realmente excluir esse produto? <S/N>: ");
 
                                 if (toupper(getche()) == 'S') {
                                 FILE *temp = fopen("arqTemp.bin", "wb");
@@ -2443,6 +2449,8 @@ void realizarExclusao() {
                                     printf("\n");
                                     system("pause");
                                 } else {
+                                    rewind(arqMaq);
+
                                     while (fread(&M, sizeof(maquinarios), 1, arqMaq) == 1) {
                                         if (strcmp(codigoApagar, M.codigo) != 0) {
                                             fwrite(&M, sizeof(maquinarios), 1, temp);
@@ -2454,6 +2462,7 @@ void realizarExclusao() {
                                 fclose(temp);
                                 remove("arqMaquinario.bin");
                                 rename("arqTemp.bin", "arqMaquinario.bin");
+                                arqMaq = fopen("arqMaquinario.bin", "rb+");
 
                                 printf("\nProduto Excluido!\n");
                                 printf("\n");
@@ -2493,7 +2502,7 @@ void realizarExclusao() {
                             printf("\n----------------\n");
 
                             if(P.quantidade == 0) {
-                            	printf("\nDeseja reamente excluir esse produto? <S/N>: ");
+                            	printf("\nDeseja realmente excluir esse produto? <S/N>: ");
                             	
                             	if (toupper(getche()) == 'S') {
                                     FILE *temp = fopen("arqTemp.bin", "wb");
@@ -2501,6 +2510,8 @@ void realizarExclusao() {
                                     if(temp == NULL) {
                                         printf("\nERRO: impossivel criar arquivo temp!\n");
                                     } else {
+                                        rewind(arqPec);
+
                                         while (fread(&P, sizeof(pecas), 1, arqPec) == 1) {
                                             if (strcmp(codigoApagar, P.codigo) != 0) {
                                                 fwrite(&P, sizeof(pecas), 1, temp);
@@ -2512,6 +2523,7 @@ void realizarExclusao() {
                                     fclose(temp);
                                     remove("arqPecas.bin");
                                     rename("arqTemp.bin", "arqPecas.bin");
+                                    arqPec = fopen("arqPecas.bin", "rb+");
 
                                     printf("\nProduto Excluido!\n");
                                     printf("\n");
@@ -2565,7 +2577,7 @@ void realizarExclusao() {
                                 printf("\nPreco: %.2f", S.preco);
                                 printf("\n----------------\n");
                                 
-                                printf("\nDeseja reamente excluir esse servico? <S/N>: ");
+                                printf("\nDeseja realmente excluir esse servico? <S/N>: ");
                                 
                                 if(toupper(getche()) == 'S') {
                                 	FILE *temp = fopen("arqTemp.bin", "wb");
@@ -2573,16 +2585,19 @@ void realizarExclusao() {
                                 	if(temp == NULL) {
                                 		printf("\nERRO: impossivel criar arquivo temp!\n");
                                 	} else {
+                                        rewind(arqSer);
+
                                         while(fread(&S, sizeof(servicos), 1, arqSer) == 1) {
                                             if(stricmp(idApagar, S.id) != 0) {
                                                 fwrite(&S, sizeof(servicos), 1, temp);
+                                            }
                                         }
-                                    }
                                 		
                                 		fclose(arqSer);
                                 		fclose(temp);
                                 		remove("arqServicos.bin");
                                 		rename("arqTemp.bin", "arqServicos.bin");
+                                        arqSer = fopen("arqServicos.bin", "rb+");
                                 		
                                 		printf("\nProduto Excluido!\n");
 	                                    system("pause");
@@ -2623,108 +2638,196 @@ void relatorios() {
     clientesPJ PJ;
     maquinarios M;
     pecas P;
-    //servicos S;
+    servicos S;
+    // vendas V;
 
-    FILE *arqPF, *arqPJ, *arqMaq, *arqPec;
+    FILE *arqPF = fopen("arqPF.bin", "rb+");
+    FILE *arqPJ = fopen("arqPJ.bin", "rb+");
+    FILE *arqMaq = fopen("arqMaquinario.bin", "rb+");
+    FILE *arqPec = fopen("arqPecas.bin", "rb+");
+    FILE *arqSer = fopen("arqServicos.bin", "rb+");
+    FILE *arqVen = fopen("arqVendas.bin", "rb+");
 
-    int op, op2;
+    int op, op2, op3;
+
+    if (arqPF == NULL) {
+        arqPF = fopen("arqPF.bin", "wb+");
+        if (arqPF == NULL) {
+            printf("\nERRO ao criar o arquivo de clientes PF!");
+            return;
+    	}
+	}
+
+	if (arqPJ == NULL) {
+	    arqPJ = fopen("arqPJ.bin", "wb+");
+	    if (arqPJ == NULL) {
+	        printf("\nERRO ao criar o arquivo de clientes PJ!");
+	        return;
+	    }
+	}
+
+	if (arqMaq == NULL) {
+	    arqMaq = fopen("arqMaquinario.bin", "wb+");
+	    if (arqMaq == NULL) {
+	        printf("\nERRO ao criar o arquivo de maquinarios!");
+	        return;
+	    }
+	}
+
+	if (arqPec == NULL) {
+	    arqPec = fopen("arqPecas.bin", "wb+");
+	    if (arqPec == NULL) {
+	        printf("\nERRO ao criar o arquivo de pecas!");
+	        return;
+	    }
+	}
+	
+	if (arqSer == NULL) {
+	    arqSer = fopen("arqServicos.bin", "wb+");
+	    if (arqSer == NULL) {
+	        printf("\nERRO ao criar o arquivo de servicos!");
+	        return;
+	    }
+	}
+
+    if (arqVen == NULL) {
+        arqVen = fopen("arqVendas.bin", "wb+");
+	    if (arqVen == NULL) {
+	        printf("\nERRO ao criar o arquivo de venda!");
+	        return;
+	    }
+    }
+
     do {
         printf("\n--- RELATORIOS ---\n");
-        printf("1 - Clientes\n2 - Produtos\n3 - Servicos\n0 - Sair\nEscolha: ");
+        printf("\n1 - Clientes");
+        printf("\n2 - Produtos");
+        printf("\n3 - Servicos");
+        printf("\n0 - Retornar ao menu");
+        printf("\nEscolha: ");
         scanf("%d", &op);
-        getchar();
-        system("cls");
 
         switch (op) {
         case 1:
-            printf("\n1 - Clientes PF\n2 - Clientes PJ\nEscolha: ");
-            scanf("%d", &op2);
-            getchar();
-            system("cls");
+                printf("\n--- RELATORIOS CLIENTES ---\n");
+                printf("\n1 - Clientes PF");
+                printf("\n2 - Clientes PJ");
+                printf("\n0 - Retornar");
+                printf("\nEscolha: ");
+                scanf("%d", &op2);
 
-            if (op2 == 1) {
-                arqPF = fopen("arqPF.bin", "rb");
-                if (arqPF == NULL) {
-                    printf("Erro ao abrir arqPF.bin\n");
-                    
+                switch (op2) {
+                case 1:
+                        while (fread(&PF, sizeof(clientesPF), 1, arqPF) == 1) {
+                            printf("\nDados do Cliente PF: ");
+                            printf("\n----------------");
+                            printf("\nNome: %s", PF.nome);
+                            printf("\nTelefone: (%.2s) %.5s-%.4s", PF.telefone, PF.telefone+2, PF.telefone+7);
+                            printf("\nEmail: %s", PF.email);
+                            printf("\nData de nascimento: %02d/%02d/%04d", PF.D.dia, PF.D.mes, PF.D.ano);
+                            printf("\n----------------\n");
+                        }
+                    break;
+                case 2:
+                        while (fread(&PJ, sizeof(clientesPJ), 1, arqPJ) == 1) {
+                            printf("\nDados do Cliente PJ: ");
+                            printf("\n----------------");
+                            printf("\nNome empresarial: %s", PJ.nomeEmpresarial);
+                            printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEmpresarial, PJ.telefoneEmpresarial+2, PJ.telefoneEmpresarial+7);
+                            printf("\nEmail: %s", PJ.emailEmpresarial);
+                            printf("\nNome do responsavel: %s", PJ.nomeDoResponsavel);
+                            printf("\n----------------\n");
+                        }
+                    break;
+                case 0:
+                        printf("\nRetornar...");
+                    break;
+                default:
+                        printf("\nERRO: escolha uma opcao valida!\n");
+                    break;
                 }
-
-                printf("\n--- RELATORIO: CLIENTES PF ---\n");
-                while (fread(&PF, sizeof(clientesPF), 1, arqPF) == 1) {
-                    printf("\nNome: %s\nEmail: %s\nCPF: %.3s.%.3s.%.3s-%.2s\nTelefone: (%.2s) %.5s-%.4s\nNascimento: %02d/%02d/%04d\n",
-                        PF.nome, PF.email,
-                        PF.cpf, PF.cpf+3, PF.cpf+6, PF.cpf+9,
-                        PF.telefone, PF.telefone+2, PF.telefone+7,
-                        PF.D.dia, PF.D.mes, PF.D.ano);
-                }
-
-                fclose(arqPF);
-            } else if (op2 == 2) {
-                arqPJ = fopen("arqPJ.bin", "rb");
-                if (arqPJ == NULL) {
-                    printf("Erro ao abrir arqPJ.bin\n");
-                    
-                }
-
-                printf("\n--- RELATORIO: CLIENTES PJ ---\n");
-                while (fread(&PJ, sizeof(clientesPJ), 1, arqPJ) == 1) {
-                    printf("\nNome Empresarial: %s\nEmail: %s\nCNPJ: %.2s.%.3s.%.3s/%.4s-%2s\nResponsavel: %s\nTelefone: (%.2s) %.5s-%.4s\n",
-                        PJ.nomeEmpresarial, PJ.emailEmpresarial,
-                        PJ.cnpj, PJ.cnpj+2, PJ.cnpj+5, PJ.cnpj+8, PJ.cnpj+12,
-                        PJ.nomeDoResponsavel,
-                        PJ.telefoneEmpresarial, PJ.telefoneEmpresarial+2, PJ.telefoneEmpresarial+7);
-                }
-
-                fclose(arqPJ);
-            }
             break;
-
         case 2:
-            printf("\n1 - Maquinarios\n2 - Pecas\nEscolha: ");
-            scanf("%d", &op2);
-            getchar();
-            system("cls");
+                printf("\n--- RELATORIOS CLIENTES ---\n");
+                printf("\n1 - Maquinarios");
+                printf("\n2 - Pecas");
+                printf("\n0 - Retornar");
+                printf("\nEscolha: ");
+                scanf("%d", &op2);
 
-            if (op2 == 1) {
-                arqMaq = fopen("arqMaquinario.bin", "rb");
-                if (arqMaq == NULL) {
-                    printf("Erro ao abrir arqMaquinario.bin\n");
-                    
+                switch (op2) {
+                case 1:
+                        while (fread(&M, sizeof(maquinarios), 1, arqMaq) == 1) {
+                            printf("\nDados do Maquinario: ");
+                            printf("\n----------------");
+                            printf("\nNome do maquinario: %s", M.nome);
+                            printf("\nCategoria: %s", M.categoria);
+                            printf("\nQuantidade: %d", M.quantidade);
+                            printf("\nPreco: %.2f", M.preco);
+                            printf("\n----------------\n");
+                        }
+                    break;
+                case 2:
+                        while (fread(&P, sizeof(pecas), 1, arqPec) == 1) {
+                            printf("\nDados da Peca: ");
+                            printf("\n----------------");
+                            printf("\nNome da peca: %s", P.nome);
+                            printf("\nCategoria: %s", P.categoria);
+                            printf("\nQuantidade: %d", P.quantidade);
+                            printf("\nPreco: %.2f", P.preco);
+                            printf("\n----------------\n");
+                        }
+                    break;
+                case 0:
+                        printf("\nRetornar...");
+                    break;
+                default:
+                        printf("\nERRO: escolha uma opcao valida!\n");
+                    break;
                 }
+            break;
+        case 3:
+                printf("\n--- RELATORIOS CLIENTES ---\n");
+                printf("\n1 - Servicos");
+                printf("\n0 - Retornar");
+                printf("\nEscolha: ");
+                scanf("%d", &op3);
 
-                printf("\n--- RELATORIO: MAQUINARIOS ---\n");
-                while (fread(&M, sizeof(maquinarios), 1, arqMaq) == 1) {
-                    printf("\nNome: %s\nCategoria: %s\nCodigo: %s\nQuantidade: %d\nPreco: R$ %.2f\n",
-                        M.nome, M.categoria, M.codigo, M.quantidade, M.preco);
+                switch (op3) {
+                case 1:
+                        while(fread(&S, sizeof(servicos), 1, arqSer) == 1) {
+                            printf("\nDados do Servico: ");
+                            printf("\n----------------");
+                            printf("\nID do servico: %s", S.id);
+                            printf("\nTipo do servico: %s", S.tipoServico);
+                            printf("\nDescricao: %s", S.descricao);
+                            printf("\nPreco: %.2f", S.preco);
+                            printf("\n----------------\n");
+                        }
+                    break;
+                case 0:
+                        printf("\nRetornar...");
+                    break;
+                default:
+                        printf("\nERRO: escolha uma opcao valida!\n");
+                    break;
                 }
-
-                fclose(arqMaq);
-            } else if (op2 == 2) {
-                arqPec = fopen("arqPecas.bin", "rb");
-                if (arqPec == NULL) {
-                    printf("Erro ao abrir arqPecas.bin\n");
-                    
-                }
-
-                printf("\n--- RELATORIO: PECAS ---\n");
-                while (fread(&P, sizeof(pecas), 1, arqPec) == 1) {
-                    printf("\nNome: %s\nCategoria: %s\nCodigo: %s\nQuantidade: %d\nPreco: R$ %.2f\n",
-                        P.nome, P.categoria, P.codigo, P.quantidade, P.preco);
-                }
-
-                fclose(arqPec);
-            }
             break;
         case 0:
-            printf("\nRetornando...\n");
+                printf("\nERRO: escolha uma opcao valida!\n");
             break;
-
         default:
-            printf("\nOpcao invalida!\n");
+                printf("\nERRO: escolha uma opcao valida!\n");
             break;
         }
-
     } while (op != 0);
+
+    fclose(arqPF);
+    fclose(arqPJ);
+    fclose(arqMaq);
+    fclose(arqPec);
+    fclose(arqSer);
+    fclose(arqVen);
 }
 
 int main() {
