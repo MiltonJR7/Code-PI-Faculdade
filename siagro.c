@@ -607,9 +607,8 @@ void buscaDeCadastros() {
     FILE *arqSer = fopen("arqServicos.bin", "rb+");
 
     char buscCpf[12], buscCnpj[15], buscCodMaq[20], buscCodPec[20], buscID[10];
-    int op, op2, op3, achou, posID;
+    int op, op2, op3, posID, posPF, posPJ, posMaq, posPec;
     
-//inicio abertura dos arquivos
    if (arqPF == NULL) {
     arqPF = fopen("arqPF.bin", "wb+");
     if (arqPF == NULL) {
@@ -649,7 +648,6 @@ void buscaDeCadastros() {
 	        return;
 	    }
 	}
-//fim de abertura de arquivo
 
     do {
         system("cls");
@@ -682,21 +680,22 @@ void buscaDeCadastros() {
                             scanf("%11s", buscCpf);
                             limparBuffer();
 
-                            achou = 0;
-                            rewind(arqPF);
-                            while (fread(&PF, sizeof(clientesPF), 1, arqPF) == 1 && !achou) {
-                                if (stricmp(buscCpf, PF.cpf) == 0) {
-                                    printf("\nDados do cliente:");
-                                    printf("\nNome: %s \nEmail: %s \nCpf: %.3s.%.3s.%.3s-%.2s \nFone: (%.2s) %.5s-%.4s \nData de nascimento: %02d/%02d/%04d \n", PF.nome, PF.email, PF.cpf, PF.cpf+3, PF.cpf+6, PF.cpf+9, PF.telefone, PF.telefone+2, PF.telefone+7, PF.D.dia, PF.D.mes, PF.D.ano);
-                                    achou = 1;
-                                    printf("\n");
-                                    system("pause");
-                                }
-                            }
+                            posPF = validarCPF(arqPF, buscCpf);
 
-                            if (!achou) {
-                                printf("\nERRO: nao ha cadastro com o CPF digitado!");
-                                printf("\n");
+                            if(posPF == -1) {
+                                printf("\nERRO: o cpf digitado nao esta cadastrado!\n");
+                                system("pause");
+                            } else {
+                                fseek(arqPF, posPF, SEEK_SET);
+                                fread(&PF, sizeof(clientesPF), 1, arqPF);
+
+                                printf("\nDados do Cliente: ");
+                                printf("\n----------------");
+                                printf("\nNome: %s", PF.nome);
+                                printf("\nTelefone: (%.2s) %.5s-%.4s", PF.telefone, PF.telefone+2, PF.telefone+7);
+                                printf("\nEmail: %s", PF.email);
+                                printf("\nData de nascimento: %02d/%02d/%04d", PF.D.dia, PF.D.mes, PF.D.ano);
+                                printf("\n----------------\n");
                                 system("pause");
                             }
                         break;
@@ -707,21 +706,22 @@ void buscaDeCadastros() {
                             scanf("%14s", buscCnpj);
                             limparBuffer();
 
-                            achou = 0;
-                            rewind(arqPJ);
-                            while (fread(&PJ, sizeof(clientesPJ), 1, arqPJ) == 1 && !achou) {
-                                if (stricmp(buscCnpj, PJ.cnpj) == 0) {
-                                    printf("\nDados da empresa:");
-                                    printf("\nNome: %s \nEmail: %s \nCnpj: %.2s.%.3s.%.3s/%.4s-%2s \nResponsavel: %s \nFone: (%.2s) %.5s-%.4s \n", PJ.nomeEmpresarial, PJ.emailEmpresarial, PJ.cnpj, PJ.cnpj+2, PJ.cnpj+5, PJ.cnpj+8, PJ.cnpj+12, PJ.nomeDoResponsavel, PJ.telefoneEmpresarial, PJ.telefoneEmpresarial+2, PJ.telefoneEmpresarial+7);
-                                    achou = 1;
-                                    printf("\n");
-                                    system("pause");
-                                }
-                            }
+                            posPJ = validarCNPJ(arqPJ, buscCnpj);
 
-                            if (!achou) {
-                                printf("\nERRO: nao ha cadastro com o CNPJ digitado!");
-                                printf("\n");
+                            if(posPJ == -1) {
+                                printf("\nERRO: o cnpj digitado nao esta cadastrado!\n");
+                                system("pause");
+                            } else {
+                                fseek(arqPJ, posPJ, SEEK_SET);
+                                fread(&PJ, sizeof(clientesPJ), 1, arqPJ);
+
+                                printf("\nDados do Cliente: ");
+                                printf("\n----------------");
+                                printf("\nNome empresarial: %s", PJ.nomeEmpresarial);
+                                printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEmpresarial, PJ.telefoneEmpresarial+2, PJ.telefoneEmpresarial+7);
+                                printf("\nEmail: %s", PJ.emailEmpresarial);
+                                printf("\nNome do responsavel: %s", PJ.nomeDoResponsavel);
+                                printf("\n----------------\n");
                                 system("pause");
                             }
                         break;
@@ -753,21 +753,22 @@ void buscaDeCadastros() {
                             scanf("%19s", buscCodMaq);
                             limparBuffer();
 
-                            achou = 0;
-                            rewind(arqMaq);
-                            while (fread(&M, sizeof(maquinarios), 1, arqMaq) == 1 && !achou) {
-                                if (stricmp(buscCodMaq, M.codigo) == 0) {
-                                    printf("\nDados do maquinario:");
-                                    printf("\nNome: %s \nCategoria: %s \nCodigo: %s \nQuantidade: %d \nPreco: %.2f\n", M.nome, M.categoria, M.codigo, M.quantidade, M.preco);
-                                    achou = 1;
-                                    printf("\n");
-                                    system("pause");
-                                }
-                            }
+                            posMaq = validarMaquinario(arqMaq, buscCodMaq);
 
-                            if (!achou) {
-                                printf("\nERRO: nao ha cadastro com o codigo digitado!");
-                                printf("\n");
+                            if(posMaq == -1) {
+                                printf("\nERRO: o codigo do maquinario digitado nao esta cadastrado!\n");
+                                system("pause");
+                            } else {
+                                fseek(arqMaq, posMaq, SEEK_SET);
+                                fread(&M, sizeof(maquinarios), 1, arqMaq);
+
+                                printf("\nDados do Maquinario: ");
+                                printf("\n----------------");
+                                printf("\nNome do maquinario: %s", M.nome);
+                                printf("\nCategoria: %s", M.categoria);
+                                printf("\nQuantidade: %d", M.quantidade);
+                                printf("\nPreco: %.2f", M.preco);
+                                printf("\n----------------\n");
                                 system("pause");
                             }
                         break;
@@ -778,21 +779,22 @@ void buscaDeCadastros() {
                             scanf("%19s", buscCodPec);
                             limparBuffer();
 
-                            achou = 0;
-                            rewind(arqPec);
-                            while (fread(&P, sizeof(pecas), 1, arqPec) == 1 && !achou) {
-                                if (stricmp(buscCodPec, P.codigo) == 0) {
-                                    printf("\nDados da peca:");
-                                    printf("\nNome: %s \nCategoria: %s \nCodigo: %s \nQuantidade: %d \nPreco: %.2f\n", P.nome, P.categoria, P.codigo, P.quantidade, P.preco);
-                                    achou = 1;
-                                    printf("\n");
-                                    system("pause");
-                                }
-                            }
+                            posPec = validarPecas(arqPec, buscCodPec);
 
-                            if (!achou) {
-                                printf("\nERRO: nao ha cadastro com o codigo digitado!");
-                                printf("\n");
+                            if (posPec == -1) {
+                                printf("\nERRO: o codigo da pecas digitado nao esta cadastrado!\n");
+                                system("pause");
+                            } else {
+                                fseek(arqPec, posPec, SEEK_SET);
+                                fread(&P, sizeof(pecas), 1, arqPec);
+
+                                printf("\nDados da Peca: ");
+                                printf("\n----------------");
+                                printf("\nNome da peca: %s", P.nome);
+                                printf("\nCategoria: %s", P.categoria);
+                                printf("\nQuantidade: %d", P.quantidade);
+                                printf("\nPreco: %.2f", P.preco);
+                                printf("\n----------------\n");
                                 system("pause");
                             }
                         break;
@@ -827,12 +829,14 @@ void buscaDeCadastros() {
 
                             if(posID == -1) {
                                 printf("\nERRO: o id digitado nao esta vinculado a um servico!\n");
+                                system("pause");
                             } else {
                                 fseek(arqSer, posID, SEEK_SET);
                                 fread(&S, sizeof(servicos), 1, arqSer);
 
-                                printf("\nDados do servico: ");
+                                printf("\nDados do Servico: ");
                                 printf("\n----------------");
+                                printf("\nID do servico: %s", S.id);
                                 printf("\nTipo do servico: %s", S.tipoServico);
                                 printf("\nDescricao: %s", S.descricao);
                                 printf("\nPreco: %.2f", S.preco);
@@ -921,12 +925,14 @@ void editarCadastros() {
                             posCPF = validarCPF(arqPF, PF.cpf);
 
                             if (posCPF == -1) {
-                                printf("ERRO: CPF nao encontrado!\n");
+                                printf("\nERRO: CPF nao encontrado!\n");
+                                system("pause");
                             } else {
                                 fseek(arqPF, posCPF, SEEK_SET);
                                 fread(&PF, sizeof(clientesPF), 1, arqPF);
 
-                                printf("\n----------------\n");
+                                printf("\nDados do Cliente: ");
+                                printf("\n----------------");
                                 printf("\nNome: %s", PF.nome);
                                 printf("\nTelefone: (%.2s) %.5s-%.4s", PF.telefone, PF.telefone+2, PF.telefone+7);
                                 printf("\nEmail: %s", PF.email);
@@ -948,13 +954,13 @@ void editarCadastros() {
 
                                                 fseek(arqPF, posCPF, SEEK_SET);
                                                 fwrite(&PF, sizeof(clientesPF), 1, arqPF);
-                                                printf("\nTelefone atualizado com sucesso!\n");
+                                                printf("\nTelefone salvo!\n");
 
-                                                printf("\nDados salvos: \n");
                                                 fseek(arqPF, posCPF, SEEK_SET);
                                                 fread(&PF, sizeof(clientesPF), 1, arqPF);
 
-                                                printf("\n----------------\n");
+                                                printf("\nDados do Cliente alterado: ");
+                                                printf("\n----------------");
                                                 printf("\nNome: %s", PF.nome);
                                                 printf("\nTelefone: (%.2s) %.5s-%.4s", PF.telefone, PF.telefone+2, PF.telefone+7);
                                                 printf("\nEmail: %s", PF.email);
@@ -965,19 +971,19 @@ void editarCadastros() {
 
                                         case 2:
                                                 system("cls");
-                                                printf("Novo email: ");
+                                                printf("\nNovo email: ");
                                                 fgets(PF.email, MAXSTR, stdin);
                                                 PF.email[strcspn(PF.email, "\n")] = '\0';
 
                                                 fseek(arqPF, posCPF, SEEK_SET);
                                                 fwrite(&PF, sizeof(clientesPF), 1, arqPF);
-                                                printf("\nEmail alterado!\n");
+                                                printf("\nEmail salvo!\n");
 
-                                                printf("\nDados salvos: \n");
                                                 fseek(arqPF, posCPF, SEEK_SET);
                                                 fread(&PF, sizeof(clientesPF), 1, arqPF);
 
-                                                printf("\n----------------\n");
+                                                printf("\nDados do Cliente alterado: ");
+                                                printf("\n----------------");
                                                 printf("\nNome: %s", PF.nome);
                                                 printf("\nTelefone: (%.2s) %.5s-%.4s", PF.telefone, PF.telefone+2, PF.telefone+7);
                                                 printf("\nEmail: %s", PF.email);
@@ -1010,12 +1016,14 @@ void editarCadastros() {
                             posCNPJ = validarCNPJ(arqPJ, PJ.cnpj);
 
                             if (posCNPJ == -1) {
-                                printf("ERRO: CNPJ nao encontrado!\n");
+                                printf("\nERRO: CNPJ nao encontrado!\n");
+                                system("pause");
                             } else {
                                 fseek(arqPJ, posCNPJ, SEEK_SET);
                                 fread(&PJ, sizeof(clientesPJ), 1, arqPJ);
 
-                                printf("\n----------------\n");
+                                printf("\nDados do Cliente: ");
+                                printf("\n----------------");
                                 printf("\nNome empresarial: %s", PJ.nomeEmpresarial);
                                 printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEmpresarial, PJ.telefoneEmpresarial+2, PJ.telefoneEmpresarial+7);
                                 printf("\nEmail: %s", PJ.emailEmpresarial);
@@ -1037,14 +1045,13 @@ void editarCadastros() {
 
                                                 fseek(arqPJ, posCNPJ, SEEK_SET);
                                                 fwrite(&PJ, sizeof(clientesPJ), 1, arqPJ);
-
-                                                printf("\nNome empresarial atualizado com sucesso!\n");
-                                                printf("\nDados salvos: \n");
+                                                printf("\nNome empresarial salvo!\n");
 
                                                 fseek(arqPJ, posCNPJ, SEEK_SET);
                                                 fread(&PJ, sizeof(clientesPJ), 1, arqPJ);
 
-                                                printf("\n----------------\n");
+                                                printf("\nDados do Cliente alterado: ");
+                                                printf("\n----------------");
                                                 printf("\nNome empresarial: %s", PJ.nomeEmpresarial);
                                                 printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEmpresarial, PJ.telefoneEmpresarial+2, PJ.telefoneEmpresarial+7);
                                                 printf("\nEmail: %s", PJ.emailEmpresarial);
@@ -1055,20 +1062,19 @@ void editarCadastros() {
 
                                         case 2:
                                                 system("cls");
-                                                printf("Novo telefone: ");
+                                                printf("\nNovo telefone: ");
                                                 scanf("%11s", PJ.telefoneEmpresarial);
                                                 limparBuffer();
 
                                                 fseek(arqPJ, posCNPJ, SEEK_SET);
                                                 fwrite(&PJ, sizeof(clientesPJ), 1, arqPJ);
-
-                                                printf("\nTelefone alterado!\n");
-                                                printf("\nDados salvos: \n");
+                                                printf("\nTelefone salvo!\n");
 
                                                 fseek(arqPJ, posCNPJ, SEEK_SET);
                                                 fread(&PJ, sizeof(clientesPJ), 1, arqPJ);
 
-                                                printf("\n----------------\n");
+                                                printf("\nDados do Cliente alterado: ");
+                                                printf("\n----------------");
                                                 printf("\nNome empresarial: %s", PJ.nomeEmpresarial);
                                                 printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEmpresarial, PJ.telefoneEmpresarial+2, PJ.telefoneEmpresarial+7);
                                                 printf("\nEmail: %s", PJ.emailEmpresarial);
@@ -1078,20 +1084,19 @@ void editarCadastros() {
                                             break;
                                         case 3:
                                                 system("cls");
-                                                printf("Novo email: ");
+                                                printf("\nNovo email: ");
                                                 fgets(PJ.emailEmpresarial, MAXSTR, stdin);
                                                 PJ.emailEmpresarial[strcspn(PJ.emailEmpresarial, "\n")] = '\0';
 
                                                 fseek(arqPJ, posCNPJ, SEEK_SET);
-                                                fwrite(&PJ, sizeof(clientesPJ), 1, arqPJ);
-                                                
-                                                printf("\nEmail alterado!\n");
-                                                printf("\nDados salvos: \n");
+                                                fwrite(&PJ, sizeof(clientesPJ), 1, arqPJ);                              
+                                                printf("\nEmail salvo!\n");
 
                                                 fseek(arqPJ, posCNPJ, SEEK_SET);
                                                 fread(&PJ, sizeof(clientesPJ), 1, arqPJ);
 
-                                                printf("\n----------------\n");
+                                                printf("\nDados do Cliente alterado: ");
+                                                printf("\n----------------");
                                                 printf("\nNome empresarial: %s", PJ.nomeEmpresarial);
                                                 printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEmpresarial, PJ.telefoneEmpresarial+2, PJ.telefoneEmpresarial+7);
                                                 printf("\nEmail: %s", PJ.emailEmpresarial);
@@ -1101,20 +1106,19 @@ void editarCadastros() {
                                             break;
                                         case 4:
                                                 system("cls");
-                                                printf("Novo nome do responsavel: ");
+                                                printf("\nNovo nome do responsavel: ");
                                                 fgets(PJ.nomeDoResponsavel, MAXSTR, stdin);
                                                 PJ.nomeDoResponsavel[strcspn(PJ.nomeDoResponsavel, "\n")] = '\0';
 
                                                 fseek(arqPJ, posCNPJ, SEEK_SET);
                                                 fwrite(&PJ, sizeof(clientesPJ), 1, arqPJ);
-
-                                                printf("\nNome do responsavel alterado!\n");
-                                                printf("\nDados salvos: \n");
+                                                printf("\nNome do responsavel salvo!\n");
 
                                                 fseek(arqPJ, posCNPJ, SEEK_SET);
                                                 fread(&PJ, sizeof(clientesPJ), 1, arqPJ);
 
-                                                printf("\n----------------\n");
+                                                printf("\nDados do Cliente alterado: ");
+                                                printf("\n----------------");
                                                 printf("\nNome empresarial: %s", PJ.nomeEmpresarial);
                                                 printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEmpresarial, PJ.telefoneEmpresarial+2, PJ.telefoneEmpresarial+7);
                                                 printf("\nEmail: %s", PJ.emailEmpresarial);
@@ -1170,12 +1174,14 @@ void editarCadastros() {
                             posMaq = validarMaquinario(arqMaq, M.codigo);
 
                             if (posMaq == -1) {
-                                printf("ERRO: CODIGO nao encontrado!\n");
+                                printf("\nERRO: CODIGO nao encontrado!\n");
+                                system("pause");
                             } else {
                                 fseek(arqMaq, posMaq, SEEK_SET);
                                 fread(&M, sizeof(maquinarios), 1, arqMaq);
 
-                                printf("\n----------------\n");
+                                printf("\nDados do Maquinario: ");
+                                printf("\n----------------");
                                 printf("\nNome do maquinario: %s", M.nome);
                                 printf("\nCategoria: %s", M.categoria);
                                 printf("\nQuantidade: %d", M.quantidade);
@@ -1197,14 +1203,13 @@ void editarCadastros() {
 
                                                 fseek(arqMaq, posMaq, SEEK_SET);
                                                 fwrite(&M, sizeof(maquinarios), 1, arqMaq);
-                                                
-                                                printf("\nNome do maquinario atualizado com sucesso!\n");
-                                                printf("\nDados salvos: \n");
+                                                printf("\nNome do maquinario salvo!\n");
 
                                                 fseek(arqMaq, posMaq, SEEK_SET);
                                                 fread(&M, sizeof(maquinarios), 1, arqMaq);
 
-                                                printf("\n----------------\n");
+                                                printf("\nDados do Maquinario alterado: ");
+                                                printf("\n----------------");
                                                 printf("\nNome do maquinario: %s", M.nome);
                                                 printf("\nCategoria: %s", M.categoria);
                                                 printf("\nQuantidade: %d", M.quantidade);
@@ -1215,20 +1220,19 @@ void editarCadastros() {
 
                                         case 2:
                                                 system("cls");
-                                                printf("Nova categoria: ");
+                                                printf("\nNova categoria: ");
                                                 fgets(M.categoria, MAXSTR, stdin);
                                                 M.categoria[strcspn(M.categoria, "\n")] = '\0';
 
                                                 fseek(arqMaq, posMaq, SEEK_SET);
-                                                fwrite(&M, sizeof(maquinarios), 1, arqMaq);
-                                                
-                                                printf("\nCategoria alterada!\n");
-                                                printf("\nDados salvos: \n");
+                                                fwrite(&M, sizeof(maquinarios), 1, arqMaq); 
+                                                printf("\nCategoria do maquinario salvo!\n");
 
                                                 fseek(arqMaq, posMaq, SEEK_SET);
                                                 fread(&M, sizeof(maquinarios), 1, arqMaq);
                                                 
-                                                printf("\n----------------\n");
+                                                printf("\nDados do Maquinario alterado: ");
+                                                printf("\n----------------");
                                                 printf("\nNome do maquinario: %s", M.nome);
                                                 printf("\nCategoria: %s", M.categoria);
                                                 printf("\nQuantidade: %d", M.quantidade);
@@ -1238,20 +1242,19 @@ void editarCadastros() {
                                             break;
                                         case 3:
                                                 system("cls");
-                                                printf("Nova quantidade: ");
+                                                printf("\nNova quantidade: ");
                                                 scanf("%d", &M.quantidade);
                                                 getchar();
 
                                                 fseek(arqMaq, posMaq, SEEK_SET);
                                                 fwrite(&M, sizeof(maquinarios), 1, arqMaq);
-                                                
-                                                printf("\nQuantidade alterada!\n");
-                                                printf("\nDados salvos: \n");
+                                                printf("\nQuantidade do maquinario salvo!\n");
 
                                                 fseek(arqMaq, posMaq, SEEK_SET);
                                                 fread(&M, sizeof(maquinarios), 1, arqMaq);
                                                 
-                                                printf("\n----------------\n");
+                                                printf("\nDados do Maquinario alterado: ");
+                                                printf("\n----------------");
                                                 printf("\nNome do maquinario: %s", M.nome);
                                                 printf("\nCategoria: %s", M.categoria);
                                                 printf("\nQuantidade: %d", M.quantidade);
@@ -1261,20 +1264,19 @@ void editarCadastros() {
                                             break;
                                         case 4:
                                                 system("cls");
-                                                printf("Novo preco: ");
+                                                printf("\nNovo preco: ");
                                                 scanf("%f", &M.preco);
                                                 getchar();
 
                                                 fseek(arqMaq, posMaq, SEEK_SET);
                                                 fwrite(&M, sizeof(maquinarios), 1, arqMaq);
-                                                
-                                                printf("\nPreco alterado!\n");
-                                                printf("\nDados salvos: \n");
+                                                printf("\nPreco do maquinario salvo!\n");
 
                                                 fseek(arqMaq, posMaq, SEEK_SET);
                                                 fread(&M, sizeof(maquinarios), 1, arqMaq);
                                                 
-                                                printf("\n----------------\n");
+                                                printf("\nDados do Maquinario alterado: ");
+                                                printf("\n----------------");
                                                 printf("\nNome do maquinario: %s", M.nome);
                                                 printf("\nCategoria: %s", M.categoria);
                                                 printf("\nQuantidade: %d", M.quantidade);
@@ -1282,7 +1284,7 @@ void editarCadastros() {
                                                 printf("\n----------------\n");
                                             break;
                                         case 0:
-                                            printf("\nSaindo da edicao deste cliente...\n");
+                                            printf("\nSaindo da edicao deste maquinario...\n");
                                             break;
 
                                         default:
@@ -1291,7 +1293,7 @@ void editarCadastros() {
                                     }
                                 } while (op2 != 0);
                             }
-                            printf("\nDeseja editar outro Cliente? (S/N): ");
+                            printf("\nDeseja editar outro Maquinario? (S/N): ");
                         } while (toupper(getche()) == 'S');
                     break;
                 break;
@@ -1307,11 +1309,13 @@ void editarCadastros() {
 
                             if (posPec == -1) {
                                 printf("ERRO: CODIGO nao encontrado!\n");
+                                system("pause");
                             } else {
                                 fseek(arqPec, posPec, SEEK_SET);
                                 fread(&P, sizeof(pecas), 1, arqPec);
 
-                                printf("\n----------------\n");
+                                printf("\nDados da Peca: ");
+                                printf("\n----------------");
                                 printf("\nNome da peca: %s", P.nome);
                                 printf("\nCategoria: %s", P.categoria);
                                 printf("\nQuantidade: %d", P.quantidade);
@@ -1333,14 +1337,13 @@ void editarCadastros() {
 
                                                 fseek(arqPec, posPec, SEEK_SET);
                                                 fwrite(&P, sizeof(pecas), 1, arqPec);
-                                                
-                                                printf("\nNome da peca atualizado com sucesso!\n");
-                                                printf("\nDados salvos: \n");
+                                                printf("\nNome da peca salvo!\n");
 
                                                 fseek(arqPec, posPec, SEEK_SET);
                                                 fread(&P, sizeof(pecas), 1, arqPec);
 
-                                                printf("\n----------------\n");
+                                                printf("\nDados da Peca alterado: ");
+                                                printf("\n----------------");
                                                 printf("\nNome da peca: %s", P.nome);
                                                 printf("\nCategoria: %s", P.categoria);
                                                 printf("\nQuantidade: %d", P.quantidade);
@@ -1351,20 +1354,19 @@ void editarCadastros() {
 
                                         case 2:
                                                 system("cls");
-                                                printf("Nova categoria: ");
+                                                printf("\nNova categoria: ");
                                                 fgets(P.categoria, MAXSTR, stdin);
                                                 P.categoria[strcspn(P.categoria, "\n")] = '\0';
 
                                                 fseek(arqPec, posPec, SEEK_SET);
                                                 fwrite(&P, sizeof(pecas), 1, arqPec);
-                                                
-                                                printf("\nCategoria alterada!\n");
-                                                printf("\nDados salvos: \n");
+                                                printf("\nCategoria da peca salvo!\n");
 
                                                 fseek(arqPec, posPec, SEEK_SET);
                                                 fread(&P, sizeof(pecas), 1, arqPec);
                                                 
-                                                printf("\n----------------\n");
+                                                printf("\nDados da Peca alterado: ");
+                                                printf("\n----------------");
                                                 printf("\nNome da peca: %s", P.nome);
                                                 printf("\nCategoria: %s", P.categoria);
                                                 printf("\nQuantidade: %d", P.quantidade);
@@ -1374,20 +1376,19 @@ void editarCadastros() {
                                             break;
                                         case 3:
                                                 system("cls");
-                                                printf("Nova quantidade: ");
+                                                printf("\nNova quantidade: ");
                                                 scanf("%d", &P.quantidade);
                                                 getchar();
 
                                                 fseek(arqPec, posPec, SEEK_SET);
                                                 fwrite(&P, sizeof(pecas), 1, arqPec);
-                                                
-                                                printf("\nQuantidade alterada!\n");
-                                                printf("\nDados salvos: \n");
+                                                printf("\nQuantidade da peca salvo!\n");
 
                                                 fseek(arqPec, posPec, SEEK_SET);
                                                 fread(&P, sizeof(pecas), 1, arqPec);
                                                 
-                                                printf("\n----------------\n");
+                                                printf("\nDados da Peca alterado: ");
+                                                printf("\n----------------");
                                                 printf("\nNome da peca: %s", P.nome);
                                                 printf("\nCategoria: %s", P.categoria);
                                                 printf("\nQuantidade: %d", P.quantidade);
@@ -1403,14 +1404,13 @@ void editarCadastros() {
 
                                                 fseek(arqPec, posPec, SEEK_SET);
                                                 fwrite(&P, sizeof(pecas), 1, arqPec);
-                                                
-                                                printf("\nPreco alterado!\n");
-                                                printf("\nDados salvos: \n");
+                                                printf("\nPreco da peca salvo!\n");
 
                                                 fseek(arqPec, posPec, SEEK_SET);
                                                 fread(&P, sizeof(pecas), 1, arqPec);
                                                 
-                                                printf("\n----------------\n");
+                                                printf("\nDados da Peca alterado: ");
+                                                printf("\n----------------");
                                                 printf("\nNome da peca: %s", P.nome);
                                                 printf("\nCategoria: %s", P.categoria);
                                                 printf("\nQuantidade: %d", P.quantidade);
@@ -1418,7 +1418,7 @@ void editarCadastros() {
                                                 printf("\n----------------\n");
                                             break;
                                         case 0:
-                                            printf("\nSaindo da edicao deste cliente...\n");
+                                            printf("\nSaindo da edicao desta peca...\n");
                                             break;
 
                                         default:
@@ -1427,7 +1427,7 @@ void editarCadastros() {
                                     }
                                 } while (op2 != 0);
                             }
-                            printf("\nDeseja editar outro Cliente? (S/N): ");
+                            printf("\nDeseja editar outra Pecas? (S/N): ");
                         } while (toupper(getche()) == 'S');
                     break;
                 break;
@@ -1463,11 +1463,13 @@ void editarCadastros() {
 
                             if (posID == -1) {
                                 printf("\nERRO: o id digitado nao esta vinculado a um servico!\n");
+                                system("pause");
                             } else {
                                 fseek(arqSer, posID, SEEK_SET);
                                 fread(&S, sizeof(servicos), 1, arqSer);
 
-                                printf("\n----------------\n");
+                                printf("\nDados do Servico: ");
+                                printf("\n----------------");
                                 printf("\nTipo do servico: %s", S.tipoServico);
                                 printf("\nDescricao: %s", S.descricao);
                                 printf("\nPreco: %.2f", S.preco);
@@ -1488,14 +1490,13 @@ void editarCadastros() {
 
                                                 fseek(arqSer, posID, SEEK_SET);
                                                 fwrite(&S, sizeof(servicos), 1, arqSer);
-                                                
-                                                printf("\nTipo de servico atualizado com sucesso!\n");
-                                                printf("\nDados salvos: \n");
+                                                printf("\nTipo de servico salvo!\n");
 
                                                 fseek(arqSer, posID, SEEK_SET);
                                                 fread(&S, sizeof(servicos), 1, arqSer);
 
-                                                printf("\n----------------\n");
+                                                printf("\nDados do Servico alterado: ");
+                                                printf("\n----------------");
                                                 printf("\nTipo do servico: %s", S.tipoServico);
                                                 printf("\nDescricao: %s", S.descricao);
                                                 printf("\nPreco: %.2f", S.preco);
@@ -1505,20 +1506,20 @@ void editarCadastros() {
 
                                         case 2:
                                                 system("cls");
-                                                printf("Nova descricao: ");
+                                                printf("\nNova descricao: ");
                                                 fgets(S.descricao, MAXSTR, stdin);
                                                 S.descricao[strcspn(S.descricao, "\n")] = '\0';
 
                                                 fseek(arqSer, posID, SEEK_SET);
                                                 fwrite(&S, sizeof(servicos), 1, arqSer);
-                                                
-                                                printf("\nDescriacao alterada!\n");
-                                                printf("\nDados salvos: \n");
+                                                printf("\nDescricao do servico salvo!\n");
 
                                                 fseek(arqSer, posID, SEEK_SET);
                                                 fread(&S, sizeof(servicos), 1, arqSer);
                                                 
-                                                printf("\n----------------\n");
+                                                printf("\nDados do Servico alterado: ");
+                                                printf("\n----------------");
+                                                printf("\nID do servico: %s", S.id);
                                                 printf("\nTipo do servico: %s", S.tipoServico);
                                                 printf("\nDescricao: %s", S.descricao);
                                                 printf("\nPreco: %.2f", S.preco);
@@ -1527,20 +1528,20 @@ void editarCadastros() {
                                             break;
                                         case 3:
                                                 system("cls");
-                                                printf("Novo preco: ");
+                                                printf("\nNovo preco: ");
                                                 scanf("%f", &S.preco);
                                                 getchar();
 
                                                 fseek(arqSer, posID, SEEK_SET);
                                                 fwrite(&S, sizeof(servicos), 1, arqSer);
-                                                
-                                                printf("\nPreco alterado!\n");
-                                                printf("\nDados salvos: \n");
+                                                printf("\nPreco do servico salvo!\n");
 
                                                 fseek(arqSer, posID, SEEK_SET);
                                                 fread(&S, sizeof(servicos), 1, arqSer);
                                                 
-                                                printf("\n----------------\n");
+                                                printf("\nDados do Servico alterado: ");
+                                                printf("\n----------------");
+                                                printf("\nID do servico: %s", S.id);
                                                 printf("\nTipo do servico: %s", S.tipoServico);
                                                 printf("\nDescricao: %s", S.descricao);
                                                 printf("\nPreco: %.2f", S.preco);
@@ -1548,7 +1549,7 @@ void editarCadastros() {
 
                                             break;
                                         case 0:
-                                            printf("\nSaindo da edicao deste cliente...\n");
+                                            printf("\nSaindo da edicao deste servico...\n");
                                             break;
 
                                         default:
@@ -1557,7 +1558,7 @@ void editarCadastros() {
                                     }
                                 } while (op2 != 0);
                             }
-                            printf("\nDeseja editar outro Cliente? (S/N): ");
+                            printf("\nDeseja editar outro Servico? (S/N): ");
                         } while (toupper(getche()) == 'S');
                     break;
                 case 0:
@@ -1586,6 +1587,9 @@ void editarCadastros() {
     fclose(arqPec);
     fclose(arqSer);
 }
+
+// FIM DA FUNCAO DE EDITAR ------------------------------------------------------------------------------------------------------
+// INICIO DA FUNCAO DE VENDA ----------------------------------------------------------------------------------------------------
 
 void realizarVenda() {
     clientesPF PF;
@@ -1647,6 +1651,7 @@ void realizarVenda() {
 
                         if (pos == -1 || posMaq == -1) {
                             printf("\nERRO: Um dos dados nao exite no cadastro!\n");
+                            system("pause");
                         } else {
                             system("cls");
                             fseek(arqPF, pos, SEEK_SET);
@@ -1676,7 +1681,8 @@ void realizarVenda() {
                             getchar();
 
                             if (V.quantDesejada > M.quantidade) {
-                                printf("Estoque insuficiente!\n");
+                                printf("\nEstoque insuficiente!\n");
+                                system("pause");
                             } else {
                                 V.precoParaPagar = V.quantDesejada * M.preco;   
                                 
@@ -1706,6 +1712,7 @@ void realizarVenda() {
                                 fseek(arqMaq, posMaq, SEEK_SET);
                                 fwrite(&M, sizeof(maquinarios), 1, arqMaq); fflush(arqMaq);
                                 printf("\nVenda registrada com sucesso!\n");
+                                system("pause");
                             }
                         }
 
@@ -1726,6 +1733,7 @@ void realizarVenda() {
 
                         if(pos == -1 || posPec == -1) {
                             printf("\nERRO: Um dos dados nao exite no cadastro!\n");
+                            system("pause");
                         } else {
                             system("cls");
                             fseek(arqPF, pos, SEEK_SET);
@@ -1754,7 +1762,8 @@ void realizarVenda() {
                             getchar();
 
                             if (V.quantDesejada > P.quantidade) {
-                                printf("Estoque insuficiente!\n");
+                                printf("\nEstoque insuficiente!\n");
+                                system("pause");
                             } else {
                                 V.precoParaPagar = V.quantDesejada * P.preco;
 
@@ -1784,6 +1793,7 @@ void realizarVenda() {
                                 fseek(arqPec, posPec, SEEK_SET);
                                 fwrite(&P, sizeof(pecas), 1, arqPec); fflush(arqPec);
                                 printf("\nVenda registrada com sucesso!\n");
+                                system("pause");
                             }
                         }
                     break;
@@ -1911,6 +1921,7 @@ void realizarVenda() {
 
                         if (pos == -1 || posMaq == -1) {
                             printf("\nERRO: Um dos dados nao exite no cadastro!\n");
+                            system("pause");
                         } else {
                             system("cls");
                             fseek(arqPJ, pos, SEEK_SET);
@@ -1940,7 +1951,8 @@ void realizarVenda() {
                             getchar();
 
                             if (V.quantDesejada > M.quantidade) {
-                                printf("Estoque insuficiente!\n");
+                                printf("\nEstoque insuficiente!\n");
+                                system("pause");
                             } else {
                                 V.precoParaPagar = V.quantDesejada * M.preco;   
                                 
@@ -1970,6 +1982,7 @@ void realizarVenda() {
                                 fseek(arqMaq, posMaq, SEEK_SET); fflush(arqMaq);
                                 fwrite(&M, sizeof(maquinarios), 1, arqMaq);
                                 printf("\nVenda registrada com sucesso!\n");
+                                system("pause");
                             }
                         }
 
@@ -1991,6 +2004,7 @@ void realizarVenda() {
 
                         if(pos == -1 || posPec == -1) {
                             printf("\nERRO: Um dos dados nao existe no cadastro!\n");
+                            system("pause");
                         } else {
                             system("cls");
                             fseek(arqPJ, pos, SEEK_SET);
@@ -2020,7 +2034,8 @@ void realizarVenda() {
                             getchar();
 
                             if (V.quantDesejada > P.quantidade) {
-                                printf("Estoque insuficiente!\n");
+                                printf("\nEstoque insuficiente!\n");
+                                system("pause");
                             } else {
                                 V.precoParaPagar = V.quantDesejada * P.preco;
 
@@ -2050,6 +2065,7 @@ void realizarVenda() {
                                 fseek(arqPec, posPec, SEEK_SET);
                                 fwrite(&P, sizeof(pecas), 1, arqPec); fflush(arqPec);
                                 printf("\nVenda registrada com sucesso!\n");
+                                system("pause");
                             }
                         } 
                     break;
@@ -2161,12 +2177,15 @@ void realizarVenda() {
     } while (op != 0);
 }
 
+// FIM DA FUNCAO DE VENDA --------------------------------------------------------------------------------------
+// INICIO DA FUNCAO DE EXCLUSAO --------------------------------------------------------------------------------
+
 void realizarExclusao() {
     clientesPF PF;
     clientesPJ PJ;
     maquinarios M;
     pecas P;
-    // servicos S;
+    servicos S;
     // vendas V;
 
     FILE *arqPF = fopen("arqPF.bin", "rb+");
@@ -2225,8 +2244,8 @@ void realizarExclusao() {
 	    }
     }
 
-    int op, op2, pos, posVen;
-    char cpfApagar[12], cnpjApagar[14], codigoApagar[20];
+    int op, op2, op3, pos, posVen;
+    char cpfApagar[12], cnpjApagar[14], codigoApagar[20], idApagar[10];
 
     do {
         system("cls");
@@ -2346,26 +2365,24 @@ void realizarExclusao() {
 
                                     if (temp == NULL) {
                                         printf("\nERRO: impossivel criar arquivo temp!\n");
-                                    }
-
-                                    rewind(arqPJ);
-                                    while (fread(&PJ, sizeof(clientesPJ), 1, arqPJ) == 1) {
-                                        if (strcmp(cnpjApagar, PJ.cnpj) != 0) {
-                                            fwrite(&PJ, sizeof(clientesPJ), 1, temp);
+                                    } else {
+                                        while (fread(&PJ, sizeof(clientesPJ), 1, arqPJ) == 1) {
+                                            if (strcmp(cnpjApagar, PJ.cnpj) != 0) {
+                                                fwrite(&PJ, sizeof(clientesPJ), 1, temp);
+                                            }
                                         }
                                     }
+
                                     fclose(arqPJ);
                                     fclose(temp);
                                     remove("arqPJ.bin");
                                     rename("arqTemp.bin", "arqPJ.bin");
 
                                     printf("\nCliente Excluido!\n");
-                                    printf("\n");
                                     system("pause");
                                 }
                             } else {
                                 printf("\nNao e possivel excluir um cliente com uma compra registrada\n");
-                                printf("\n");
                                 system("pause");
                             }
                         } 
@@ -2415,33 +2432,39 @@ void realizarExclusao() {
                             printf("\nPreco: %.2f", M.preco);
                             printf("\n----------------\n");
 
-                            printf("\nDeseja reamente excluir esse produto? <S/N>: ");
+                            if(M.quantidade == 0) {
+                                printf("\nDeseja reamente excluir esse produto? <S/N>: ");
 
-                            if (toupper(getche()) == 'S') {
+                                if (toupper(getche()) == 'S') {
                                 FILE *temp = fopen("arqTemp.bin", "wb");
 
                                 if(temp == NULL) {
                                     printf("\nERRO: impossivel criar arquivo temp!\n");
                                     printf("\n");
                                     system("pause");
-                                }
-
-                                rewind(arqMaq);
-                                while (fread(&M, sizeof(maquinarios), 1, arqMaq) == 1) {
-                                    if (strcmp(codigoApagar, M.codigo) != 0) {
-                                        fwrite(&M, sizeof(maquinarios), 1, temp);
+                                } else {
+                                    while (fread(&M, sizeof(maquinarios), 1, arqMaq) == 1) {
+                                        if (strcmp(codigoApagar, M.codigo) != 0) {
+                                            fwrite(&M, sizeof(maquinarios), 1, temp);
+                                        }
                                     }
-                                    
-                                    fclose(arqMaq);
-                                    fclose(temp);
-                                    remove("arqMaq.bin");
-                                    rename("arqTemp.bin", "arqMaq.bin");
+                                }
+                                
+                                fclose(arqMaq);
+                                fclose(temp);
+                                remove("arqMaquinario.bin");
+                                rename("arqTemp.bin", "arqMaquinario.bin");
 
-                                    printf("\nProduto Excluido!\n");
-                                    printf("\n");
-                                    system("pause");
+                                printf("\nProduto Excluido!\n");
+                                printf("\n");
+                                system("pause");
                                 } 
+                            } else {
+                                printf("\nERRO: impossivel excluir com pecas no estoque!\n");
+                                system("pause");
                             }
+
+                            
                         }
                     break;
                 case 2:
@@ -2469,30 +2492,34 @@ void realizarExclusao() {
                             printf("\nPreco: %.2f", P.preco);
                             printf("\n----------------\n");
 
-                            printf("\nDeseja reamente excluir esse produto? <S/N>: ");
+                            if(P.quantidade == 0) {
+                            	printf("\nDeseja reamente excluir esse produto? <S/N>: ");
+                            	
+                            	if (toupper(getche()) == 'S') {
+                                    FILE *temp = fopen("arqTemp.bin", "wb");
 
-                            if (toupper(getche()) == 'S') {
-                                FILE *temp = fopen("arqTemp.bin", "wb");
-
-                                if(temp == NULL) {
-                                    printf("\nERRO: impossivel criar arquivo temp!\n");
-                                }
-
-                                rewind(arqPec);
-                                while (fread(&P, sizeof(pecas), 1, arqPec) == 1) {
-                                    if (strcmp(codigoApagar, P.codigo) != 0) {
-                                        fwrite(&P, sizeof(pecas), 1, temp);
+                                    if(temp == NULL) {
+                                        printf("\nERRO: impossivel criar arquivo temp!\n");
+                                    } else {
+                                        while (fread(&P, sizeof(pecas), 1, arqPec) == 1) {
+                                            if (strcmp(codigoApagar, P.codigo) != 0) {
+                                                fwrite(&P, sizeof(pecas), 1, temp);
+                                            }
+                                        }
                                     }
                                     
                                     fclose(arqPec);
                                     fclose(temp);
-                                    remove("arqPec.bin");
-                                    rename("arqTemp.bin", "arqPec.bin");
+                                    remove("arqPecas.bin");
+                                    rename("arqTemp.bin", "arqPecas.bin");
 
                                     printf("\nProduto Excluido!\n");
                                     printf("\n");
                                     system("pause");
-                                } 
+                            	}
+                            } else {
+                            	printf("\nERRO: impossivel excluir com pecas no estoque!\n");
+                                system("pause");
                             }
                         }
                     break;
@@ -2510,8 +2537,67 @@ void realizarExclusao() {
                 printf("\n1 - Apagar");
                 printf("\n0 - Retornar");
                 printf("\nEscolha: ");
-                scanf("%d", &op2);
+                scanf("%d", &op3);
                 getchar();
+                
+                switch(op3) {
+                	case 1:
+                			system("cls");
+                			printf("\n--- EXCLUIR POR ID ---\n");
+                			printf("\nDigite o id: ");
+                			scanf("%9s", idApagar);
+                			limparBuffer();
+                			
+                			pos = validarID(arqSer, idApagar);
+                			
+                			if(pos == -1) {
+                				printf("\nERRO: o ID digitado ainda nao foi cadastrado!\n");
+                            	system("pause");
+                			} else {
+                				fseek(arqSer, pos, SEEK_SET);
+                				fread(&S, sizeof(servicos), 1, arqSer);
+                				
+                				printf("\nDados do servico: ");
+                				printf("\n----------------");
+                                printf("\nID do servico: %s", S.id);
+                                printf("\nTipo do servico: %s", S.tipoServico);
+                                printf("\nDescricao: %s", S.descricao);
+                                printf("\nPreco: %.2f", S.preco);
+                                printf("\n----------------\n");
+                                
+                                printf("\nDeseja reamente excluir esse servico? <S/N>: ");
+                                
+                                if(toupper(getche()) == 'S') {
+                                	FILE *temp = fopen("arqTemp.bin", "wb");
+                                	
+                                	if(temp == NULL) {
+                                		printf("\nERRO: impossivel criar arquivo temp!\n");
+                                	} else {
+                                        while(fread(&S, sizeof(servicos), 1, arqSer) == 1) {
+                                            if(stricmp(idApagar, S.id) != 0) {
+                                                fwrite(&S, sizeof(servicos), 1, temp);
+                                        }
+                                    }
+                                		
+                                		fclose(arqSer);
+                                		fclose(temp);
+                                		remove("arqServicos.bin");
+                                		rename("arqTemp.bin", "arqServicos.bin");
+                                		
+                                		printf("\nProduto Excluido!\n");
+	                                    system("pause");
+                                	}
+                                }
+                			}
+                			
+                		break;
+                	case 0:
+                			printf("\nRetornando...\n");
+                		break;
+                	default:
+                			printf("\nERRO: escolha uma opcao valida!\n");
+                		break;
+                }
                 
             break;
         
@@ -2528,6 +2614,9 @@ void realizarExclusao() {
     fclose(arqSer);
     fclose(arqVen);
 }
+
+// FIM DA FUNCAO DE EXCLUSAO ----------------------------------------------------------------------------------------------------------------
+// INICIO DA FUNCAO DE RELATORIOS -----------------------------------------------------------------------------------------------------------
 
 void relatorios() {
     clientesPF PF;
