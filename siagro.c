@@ -259,7 +259,6 @@ void cadastroDeClientes() {
 
     int op, op2, op3, posCPF, posCNPJ, posMaq, posPec, posID;
 
-    //inicio abertura dos arquivos
     if (arqPF == NULL) {
         arqPF = fopen("arqPF.bin", "wb+");
         if (arqPF == NULL) {
@@ -307,8 +306,6 @@ void cadastroDeClientes() {
 	        return;
 	    }
     }
-
-//fim de abertura de arquivo
 
     do {
         system("cls");
@@ -580,14 +577,15 @@ void cadastroDeClientes() {
                 printf("\nERRO: escolha uma opcao valida!\n");
             break;
         }
-    } while (op != 0);
-    
+
     fclose(arqPF);
     fclose(arqPJ);
     fclose(arqMaq);
     fclose(arqPec);
     fclose(arqSer);
     fclose(arqVen);
+
+    } while (op != 0);
 }
 
 // FIM DA FUNCAO DE CADASTROS -----------------------------------------------------------------------
@@ -863,13 +861,14 @@ void buscaDeCadastros() {
                 printf("\nERRO: escolha uma opcao valida!\n");
             break;
         }    
-    } while (op != 0);
-    	
+
     fclose(arqPF);
     fclose(arqPJ);
     fclose(arqMaq);
     fclose(arqPec);
     fclose(arqSer);
+
+    } while (op != 0);
 }
 
 // FIM DA FUNCAO DE BUSCAS ------------------------------------------------------------------------------------------
@@ -1579,13 +1578,14 @@ void editarCadastros() {
             printf("\nERRO: escolha uma opcao valida!\n");
             break;
         }
-    } while (op != 0);
 
     fclose(arqPF);
     fclose(arqPJ);
     fclose(arqMaq);
     fclose(arqPec);
     fclose(arqSer);
+
+    } while (op != 0);
 }
 
 // FIM DA FUNCAO DE EDITAR ------------------------------------------------------------------------------------------------------
@@ -2174,6 +2174,14 @@ void realizarVenda() {
                 printf("\nERRO: escolha uma opcao valida!\n");
             break;
         }
+
+    fclose(arqPF);
+    fclose(arqPJ);
+    fclose(arqMaq);
+    fclose(arqPec);
+    fclose(arqSer);
+    fclose(arqVen);
+
     } while (op != 0);
 }
 
@@ -2593,14 +2601,19 @@ void realizarExclusao() {
                                             }
                                         }
                                 		
-                                		fclose(arqSer);
-                                		fclose(temp);
-                                		remove("arqServicos.bin");
-                                		rename("arqTemp.bin", "arqServicos.bin");
+                                        fclose(arqSer);
+                                        fclose(temp);
+
+                                        if (remove("arqServicos.bin") != 0) {
+                                            perror("Erro ao remover arquivo");
+                                        } else if (rename("arqTemp.bin", "arqServicos.bin") != 0) {
+                                            perror("Erro ao renomear arquivo");
+                                        } else {
+                                            printf("\nProduto Excluido!\n");
+                                        }
+
                                         arqSer = fopen("arqServicos.bin", "rb+");
-                                		
-                                		printf("\nProduto Excluido!\n");
-	                                    system("pause");
+                                        system("pause");
                                 	}
                                 }
                 			}
@@ -2620,7 +2633,6 @@ void realizarExclusao() {
                 printf("\nERRO: escolha uma opcao valida!\n");
             break;
         }
-    } while (op != 0);
 
     fclose(arqPF);
     fclose(arqPJ);
@@ -2628,6 +2640,8 @@ void realizarExclusao() {
     fclose(arqPec);
     fclose(arqSer);
     fclose(arqVen);
+
+    } while (op != 0);
 }
 
 // FIM DA FUNCAO DE EXCLUSAO ----------------------------------------------------------------------------------------------------------------
@@ -2832,7 +2846,6 @@ void relatorios() {
                 printf("\nERRO: escolha uma opcao valida!\n");
             break;
         }
-    } while (op != 0);
 
     fclose(arqPF);
     fclose(arqPJ);
@@ -2840,6 +2853,8 @@ void relatorios() {
     fclose(arqPec);
     fclose(arqSer);
     fclose(arqVen);
+
+    } while (op != 0);
 }
 
 // FIM DA FUNCAO DE RELATORIOS --------------------------------------------------------
@@ -3011,8 +3026,8 @@ void ordenacao() {
                                 fseek(arqMaq, i * sizeof(maquinarios), SEEK_SET);
                                 fread(&M, sizeof(maquinarios), 1, arqMaq);
 
-                                fseek(arqPF, (i + 1) * sizeof(maquinarios), SEEK_SET);
-                                fread(&M_ORD, sizeof(maquinarios), 1, arqPF);
+                                fseek(arqMaq, (i + 1) * sizeof(maquinarios), SEEK_SET);
+                                fread(&M_ORD, sizeof(maquinarios), 1, arqMaq);
 
                                 if(strcmp(M.nome, M_ORD.nome) > 0) {
                                     fseek(arqMaq, i * sizeof(maquinarios), SEEK_SET);
@@ -3114,6 +3129,14 @@ void ordenacao() {
                 printf("\nERRO: escolha uma opcao valida!\n");
             break;
         }
+
+    fclose(arqPF);
+    fclose(arqPJ);
+    fclose(arqMaq);
+    fclose(arqPec);
+    fclose(arqSer);
+    fclose(arqVen);
+
     } while (op != 0);
 }
 
