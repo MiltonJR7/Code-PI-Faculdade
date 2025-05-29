@@ -2699,6 +2699,7 @@ void relatorios() {
     }
 
     do {
+        system("cls");
         printf("\n--- RELATORIOS ---\n");
         printf("\n1 - Clientes");
         printf("\n2 - Produtos");
@@ -2709,6 +2710,7 @@ void relatorios() {
 
         switch (op) {
         case 1:
+                system("cls");
                 printf("\n--- RELATORIOS CLIENTES ---\n");
                 printf("\n1 - Clientes PF");
                 printf("\n2 - Clientes PJ");
@@ -2727,6 +2729,7 @@ void relatorios() {
                             printf("\nData de nascimento: %02d/%02d/%04d", PF.D.dia, PF.D.mes, PF.D.ano);
                             printf("\n----------------\n");
                         }
+                        system("pause");
                     break;
                 case 2:
                         while (fread(&PJ, sizeof(clientesPJ), 1, arqPJ) == 1) {
@@ -2738,16 +2741,19 @@ void relatorios() {
                             printf("\nNome do responsavel: %s", PJ.nomeDoResponsavel);
                             printf("\n----------------\n");
                         }
+                        system("pause");
                     break;
                 case 0:
                         printf("\nRetornar...");
                     break;
                 default:
                         printf("\nERRO: escolha uma opcao valida!\n");
+                        system("pause");
                     break;
                 }
             break;
         case 2:
+                system("cls");
                 printf("\n--- RELATORIOS CLIENTES ---\n");
                 printf("\n1 - Maquinarios");
                 printf("\n2 - Pecas");
@@ -2766,6 +2772,7 @@ void relatorios() {
                             printf("\nPreco: %.2f", M.preco);
                             printf("\n----------------\n");
                         }
+                        system("pause");
                     break;
                 case 2:
                         while (fread(&P, sizeof(pecas), 1, arqPec) == 1) {
@@ -2777,16 +2784,19 @@ void relatorios() {
                             printf("\nPreco: %.2f", P.preco);
                             printf("\n----------------\n");
                         }
+                        system("pause");
                     break;
                 case 0:
                         printf("\nRetornar...");
                     break;
                 default:
                         printf("\nERRO: escolha uma opcao valida!\n");
+                        system("pause");
                     break;
                 }
             break;
         case 3:
+                system("cls");
                 printf("\n--- RELATORIOS CLIENTES ---\n");
                 printf("\n1 - Servicos");
                 printf("\n0 - Retornar");
@@ -2804,12 +2814,14 @@ void relatorios() {
                             printf("\nPreco: %.2f", S.preco);
                             printf("\n----------------\n");
                         }
+                        system("pause");
                     break;
                 case 0:
                         printf("\nRetornar...");
                     break;
                 default:
                         printf("\nERRO: escolha uma opcao valida!\n");
+                        system("pause");
                     break;
                 }
             break;
@@ -2830,6 +2842,284 @@ void relatorios() {
     fclose(arqVen);
 }
 
+// FIM DA FUNCAO DE RELATORIOS --------------------------------------------------------
+// INICIO DA FUNCAO DE ORDENACAO ------------------------------------------------------
+
+void ordenacao() {
+    clientesPF PF, PF_ORD;
+    clientesPJ PJ, PJ_ORD;
+    maquinarios M, M_ORD;
+    pecas P, P_ORD;
+    servicos S, S_ORD;
+    // vendas V;
+
+    FILE *arqPF = fopen("arqPF.bin", "rb+");
+    FILE *arqPJ = fopen("arqPJ.bin", "rb+");
+    FILE *arqMaq = fopen("arqMaquinario.bin", "rb+");
+    FILE *arqPec = fopen("arqPecas.bin", "rb+");
+    FILE *arqSer = fopen("arqServicos.bin", "rb+");
+    FILE *arqVen = fopen("arqVendas.bin", "rb+");
+
+    int op, op2, op3, i, qtd=0;
+
+    if (arqPF == NULL) {
+        arqPF = fopen("arqPF.bin", "wb+");
+        if (arqPF == NULL) {
+            printf("\nERRO ao criar o arquivo de clientes PF!");
+            return;
+    	}
+	}
+
+	if (arqPJ == NULL) {
+	    arqPJ = fopen("arqPJ.bin", "wb+");
+	    if (arqPJ == NULL) {
+	        printf("\nERRO ao criar o arquivo de clientes PJ!");
+	        return;
+	    }
+	}
+
+	if (arqMaq == NULL) {
+	    arqMaq = fopen("arqMaquinario.bin", "wb+");
+	    if (arqMaq == NULL) {
+	        printf("\nERRO ao criar o arquivo de maquinarios!");
+	        return;
+	    }
+	}
+
+	if (arqPec == NULL) {
+	    arqPec = fopen("arqPecas.bin", "wb+");
+	    if (arqPec == NULL) {
+	        printf("\nERRO ao criar o arquivo de pecas!");
+	        return;
+	    }
+	}
+	
+	if (arqSer == NULL) {
+	    arqSer = fopen("arqServicos.bin", "wb+");
+	    if (arqSer == NULL) {
+	        printf("\nERRO ao criar o arquivo de servicos!");
+	        return;
+	    }
+	}
+
+    if (arqVen == NULL) {
+        arqVen = fopen("arqVendas.bin", "wb+");
+	    if (arqVen == NULL) {
+	        printf("\nERRO ao criar o arquivo de venda!");
+	        return;
+	    }
+    }
+
+    do {
+        system("cls");
+        printf("\n--- RELATORIOS ---\n");
+        printf("\n1 - Clientes");
+        printf("\n2 - Produtos");
+        printf("\n3 - Servicos");
+        printf("\n0 - Retornar ao menu");
+        printf("\nEscolha: ");
+        scanf("%d", &op);
+
+        switch (op) {
+        case 1:
+                system("cls");
+                printf("\n--- ORDENACAO DE CLIENTES ---\n");
+                printf("\n1 - Clientes PF");
+                printf("\n2 - Clientes PJ");
+                printf("\n0 - Retornar");
+                printf("\nEscolha: ");
+                scanf("%d", &op2);
+
+                switch (op2) {
+                case 1:
+                        fseek(arqPF, 0, SEEK_END);
+                        qtd = ftell(arqPF) / sizeof(clientesPF);
+
+                        while(qtd > 1) {
+                            for(i=0; i<qtd-1; i++) {
+                                fseek(arqPF, i * sizeof(clientesPF), SEEK_SET);
+                                fread(&PF, sizeof(clientesPF), 1, arqPF);
+
+                                fseek(arqPF, (i + 1) * sizeof(clientesPF), SEEK_SET);
+                                fread(&PF_ORD, sizeof(clientesPF), 1, arqPF);
+                                
+                                if(strcmp(PF.nome, PF_ORD.nome) > 0) {
+                                    fseek(arqPF, i * sizeof(clientesPF), SEEK_SET);
+                                    fwrite(&PF_ORD, sizeof(clientesPF), 1, arqPF);
+
+                                    fseek(arqPF, (i + 1) * sizeof(clientesPF), SEEK_SET);
+                                    fwrite(&PF, sizeof(clientesPF), 1, arqPF);
+                                }
+                            }
+                            qtd--;
+                        }
+                        fclose(arqPF);
+                        printf("\nArquivo ordenado!\n");
+	                    system("pause");
+                    break;
+                case 2:
+                        fseek(arqPJ, 0, SEEK_END);
+                        qtd = ftell(arqPJ) / sizeof(clientesPJ);
+
+                        while(qtd > 1) {
+                                for(i=0; i<qtd-1; i++) {
+                                fseek(arqPJ, i * sizeof(clientesPJ), SEEK_SET);
+                                fread(&PJ, sizeof(clientesPJ), 1, arqPJ);
+
+                                fseek(arqPJ, (i + 1) * sizeof(clientesPJ), SEEK_SET);
+                                fread(&PJ_ORD, sizeof(clientesPJ), 1, arqPJ);
+
+                                if(strcmp(PJ.nomeEmpresarial, PJ_ORD.nomeEmpresarial) > 0) {
+                                    fseek(arqPJ, i * sizeof(clientesPJ), SEEK_SET);
+                                    fwrite(&PJ_ORD, sizeof(clientesPJ), 1, arqPJ);
+
+                                    fseek(arqPJ, (i + 1) * sizeof(clientesPJ), SEEK_SET);
+                                    fwrite(&PJ, sizeof(clientesPJ), 1, arqPJ);
+                                }
+                            }
+                            qtd--;
+                        }
+                        fclose(arqPJ);
+                        printf("\nArquivo ordenado!\n");
+	                    system("pause");
+                    break;
+                case 0:
+                        printf("\nRetornar...");
+                    break;
+                default:
+                        printf("\nERRO: escolha uma opcao valida!\n");
+                        system("pause");
+                    break;
+                }
+            break;
+        case 2:
+                system("cls");
+                printf("\n--- ORDENACAO DE PRODUTOS ---\n");
+                printf("\n1 - Maquinarios");
+                printf("\n2 - Pecas");
+                printf("\n0 - Retornar");
+                printf("\nEscolha: ");
+                scanf("%d", &op2);
+
+                switch (op2) {
+                case 1:
+                        fseek(arqMaq, 0, SEEK_END);
+                        qtd = ftell(arqMaq) / sizeof(maquinarios);
+
+                        while(qtd > 1) {
+                                for(i=0; i<qtd-1; i++) {
+                                fseek(arqMaq, i * sizeof(maquinarios), SEEK_SET);
+                                fread(&M, sizeof(maquinarios), 1, arqMaq);
+
+                                fseek(arqPF, (i + 1) * sizeof(maquinarios), SEEK_SET);
+                                fread(&PF_ORD, sizeof(maquinarios), 1, arqPF);
+
+                                if(strcmp(M.nome, M_ORD.nome) > 0) {
+                                    fseek(arqMaq, i * sizeof(maquinarios), SEEK_SET);
+                                    fwrite(&M_ORD, sizeof(maquinarios), 1, arqMaq);
+
+                                    fseek(arqMaq, (i + 1) * sizeof(maquinarios), SEEK_SET);
+                                    fwrite(&M, sizeof(maquinarios), 1, arqMaq);
+                                }
+                            }
+                            qtd--;
+                        }
+                        fclose(arqMaq);
+                        printf("\nArquivo ordenado!\n");
+	                    system("pause");
+                    break;
+                case 2:
+                        fseek(arqPec, 0, SEEK_END);
+                        qtd = ftell(arqPec) / sizeof(pecas);
+
+                        while(qtd > 1) {
+                                for(i=0; i<qtd-1; i++) {
+                                fseek(arqPec, i * sizeof(pecas), SEEK_SET);
+                                fread(&P, sizeof(pecas), 1, arqPec);
+
+                                fseek(arqPec, (i + 1) * sizeof(pecas), SEEK_SET);
+                                fread(&P_ORD, sizeof(pecas), 1, arqPec);
+
+                                if(strcmp(P.nome, P_ORD.nome) > 0) {
+                                fseek(arqPec, i * sizeof(pecas), SEEK_SET);
+                                fwrite(&P_ORD, sizeof(pecas), 1, arqPec);
+
+                                fseek(arqPec, (i + 1) * sizeof(pecas), SEEK_SET);
+                                fwrite(&P, sizeof(pecas), 1, arqPec);
+                                }
+                            }
+                            qtd--;
+                        }
+                        fclose(arqPec);
+                        printf("\nArquivo ordenado!\n");
+	                    system("pause");
+                    break;
+                case 0:
+                        printf("\nRetornar...");
+                    break;
+                default:
+                        printf("\nERRO: escolha uma opcao valida!\n");
+                        system("pause");
+                    break;
+                }
+            break;
+        case 3:
+                system("cls");
+                printf("\n--- ORDENACAO DE SERVICO ---\n");
+                printf("\n1 - Servicos");
+                printf("\n0 - Retornar");
+                printf("\nEscolha: ");
+                scanf("%d", &op3);
+
+                switch (op3) {
+                case 1:
+                        fseek(arqSer, 0, SEEK_END);
+                        qtd = ftell(arqSer) / sizeof(servicos);
+
+                        while(qtd > 1) {
+                                for(i=0; i<qtd-1; i++) {
+                                fseek(arqSer, i * sizeof(servicos), SEEK_SET);
+                                fread(&S, sizeof(servicos), 1, arqSer);
+                                
+                                fseek(arqSer, (i + 1) * sizeof(servicos), SEEK_SET);
+                                fread(&S_ORD, sizeof(servicos), 1, arqSer);
+
+                                if(strcmp(S.tipoServico, S_ORD.tipoServico) > 0) {
+                                    fseek(arqSer, i * sizeof(servicos), SEEK_SET);
+                                    fwrite(&S_ORD, sizeof(servicos), 1, arqSer);
+
+                                    fseek(arqSer, (i + 1) * sizeof(servicos), SEEK_SET);
+                                    fwrite(&S, sizeof(servicos), 1, arqSer);
+                                }
+                            }
+                            qtd--;
+                        }
+                        fclose(arqSer);
+                        printf("\nArquivo ordenado!\n");
+	                    system("pause");
+                    break;
+                case 0:
+                        printf("\nRetornar...");
+                    break;
+                default:
+                        printf("\nERRO: escolha uma opcao valida!\n");
+                        system("pause");
+                    break;
+                }
+            break;
+        case 0:
+                printf("\nERRO: escolha uma opcao valida!\n");
+            break;
+        default:
+                printf("\nERRO: escolha uma opcao valida!\n");
+            break;
+        }
+    } while (op != 0);
+}
+
+// FIM DA FUNCAO DE ORDENACAO --------------------------------------------
+// INICIO DA FUNCAO DO MAIN ----------------------------------------------
+
 int main() {
     int op;
 
@@ -2842,6 +3132,7 @@ int main() {
         printf("\n4 - Realizar venda");
         printf("\n5 - Excluir");
         printf("\n6 - Relatorios");
+        printf("\n7 - Ordenacao");
         printf("\n0 - Sair");
         printf("\nEscolha: ");
         scanf("%d", &op);
@@ -2866,6 +3157,9 @@ int main() {
         case 6:
     			relatorios();
     		break;
+        case 7:
+                ordenacao();
+            break;
         case 0:
                 printf("\nEncerrando...");
             break;
@@ -2878,3 +3172,5 @@ int main() {
 
     return 0;
 }
+
+// FIM DA FUNCAO DO MAIN ----------------------------------------------
