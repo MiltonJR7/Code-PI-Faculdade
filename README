@@ -1,39 +1,69 @@
-# 🌱 SIAGRO - Sistema de Gestão de Oficina Agrícola
+🌾 SIAGRO - Sistema de Gestão de Oficina Agrícola
+O SIAGRO é um sistema escrito em C que visa facilitar o gerenciamento de oficinas agrícolas, permitindo o controle completo de clientes (PF e PJ), maquinários, peças, serviços e vendas. Ele utiliza arquivos binários para armazenamento persistente dos dados.
 
-Este é um sistema em C voltado para o gerenciamento de uma oficina agrícola, permitindo o cadastro e a busca de clientes (PF e PJ), maquinários, peças e serviços.
+⚙️ Funcionalidades Implementadas
+🧑‍🌾 Clientes
+Cadastro e busca de clientes PF (Pessoa Física) com validação por CPF
 
-## 📦 Funcionalidades
+Cadastro e busca de clientes PJ (Pessoa Jurídica) com validação por CNPJ
 
-- Cadastro de:
-  - Clientes PF e PJ
-  - Maquinários e peças
-  - Serviços vinculados a CPF ou CNPJ
-- Busca por:
-  - CPF, CNPJ, códigos de maquinário/peça
-- Armazenamento via arquivos binários
-- Menu interativo via terminal
+Edição de telefone e e-mail (PF) ou nome empresarial, telefone, e-mail e responsável (PJ)
 
-## ⚠️ Status do Projeto
+🚜 Produtos
+Cadastro, busca e edição de maquinários
 
-🚧 **Em desenvolvimento**: o sistema ainda está sendo implementado. Algumas funcionalidades estão completas, outras estão em progresso ou planejadas.
+Cadastro, busca e edição de peças
 
-## 🛠 Tecnologias
+Validação por código único
 
-- Linguagem C
-- Arquivos binários (`fwrite`, `fread`)
-- Manipulação de strings e validações básicas
+🛠 Serviços
+Cadastro, busca e edição de serviços por ID
 
-## 🔄 Futuras melhorias
+Associação de serviços a clientes (CPF ou CNPJ)
 
-- Funções de edição e exclusão de cadastros
-- Interface mais amigável no terminal
-- Melhor validação de entrada
-- Modularização do código (separar por arquivos)
+💰 Vendas
+Venda de maquinários, peças e serviços
 
-## 🚀 Como compilar
+Cálculo do preço final com base na forma de pagamento (Pix, Boleto, Financiamento)
 
-Se estiver usando Windows:
+Atualização automática do estoque
 
-```bash
-gcc codigoSiagro.c -o siagro.exe
-./siagro.exe
+Registro da data da venda
+
+📁 Armazenamento
+Os dados são armazenados em arquivos binários:
+
+arqPF.bin, arqPJ.bin — Clientes
+
+arqMaquinario.bin, arqPecas.bin — Produtos
+
+arqServicos.bin — Serviços
+
+arqVendas.bin — Vendas
+
+🚧 Status do Projeto
+🟢 Funcionalidades principais implementadas
+🟡 Melhorias em andamento
+🔴 Funções de exclusão ainda não implementadas
+
+🔮 Melhorias Futuras
+Exclusão de registros
+
+Interface mais amigável via terminal
+
+Modularização do código (separar por arquivos .h e .c)
+
+Validações mais robustas para dados de entrada
+
+Relatórios de vendas
+
+🛠 Tecnologias Utilizadas
+Linguagem C (padrão ANSI C)
+
+Arquivos binários (fopen, fread, fwrite, fseek)
+
+Console (terminal) para interface
+
+Bibliotecas:
+
+<stdio.h>, <string.h>, <ctype.h>, <conio.h>, <windows.h>
