@@ -577,6 +577,7 @@ void cadastroDeClientes() {
                 printf("\nERRO: escolha uma opcao valida!\n");
             break;
         }
+    } while (op != 0);
 
     fclose(arqPF);
     fclose(arqPJ);
@@ -584,8 +585,6 @@ void cadastroDeClientes() {
     fclose(arqPec);
     fclose(arqSer);
     fclose(arqVen);
-
-    } while (op != 0);
 }
 
 // FIM DA FUNCAO DE CADASTROS -----------------------------------------------------------------------
@@ -861,14 +860,13 @@ void buscaDeCadastros() {
                 printf("\nERRO: escolha uma opcao valida!\n");
             break;
         }    
+    } while (op != 0);
 
     fclose(arqPF);
     fclose(arqPJ);
     fclose(arqMaq);
     fclose(arqPec);
     fclose(arqSer);
-
-    } while (op != 0);
 }
 
 // FIM DA FUNCAO DE BUSCAS ------------------------------------------------------------------------------------------
@@ -1578,14 +1576,13 @@ void editarCadastros() {
             printf("\nERRO: escolha uma opcao valida!\n");
             break;
         }
+    } while (op != 0);
 
     fclose(arqPF);
     fclose(arqPJ);
     fclose(arqMaq);
     fclose(arqPec);
     fclose(arqSer);
-
-    } while (op != 0);
 }
 
 // FIM DA FUNCAO DE EDITAR ------------------------------------------------------------------------------------------------------
@@ -2174,6 +2171,7 @@ void realizarVenda() {
                 printf("\nERRO: escolha uma opcao valida!\n");
             break;
         }
+    } while (op != 0);
 
     fclose(arqPF);
     fclose(arqPJ);
@@ -2181,8 +2179,6 @@ void realizarVenda() {
     fclose(arqPec);
     fclose(arqSer);
     fclose(arqVen);
-
-    } while (op != 0);
 }
 
 // FIM DA FUNCAO DE VENDA --------------------------------------------------------------------------------------
@@ -2633,6 +2629,7 @@ void realizarExclusao() {
                 printf("\nERRO: escolha uma opcao valida!\n");
             break;
         }
+    } while (op != 0);
 
     fclose(arqPF);
     fclose(arqPJ);
@@ -2640,8 +2637,6 @@ void realizarExclusao() {
     fclose(arqPec);
     fclose(arqSer);
     fclose(arqVen);
-
-    } while (op != 0);
 }
 
 // FIM DA FUNCAO DE EXCLUSAO ----------------------------------------------------------------------------------------------------------------
@@ -2846,6 +2841,7 @@ void relatorios() {
                 printf("\nERRO: escolha uma opcao valida!\n");
             break;
         }
+    } while (op != 0);
 
     fclose(arqPF);
     fclose(arqPJ);
@@ -2853,8 +2849,6 @@ void relatorios() {
     fclose(arqPec);
     fclose(arqSer);
     fclose(arqVen);
-
-    } while (op != 0);
 }
 
 // FIM DA FUNCAO DE RELATORIOS --------------------------------------------------------
@@ -3129,6 +3123,7 @@ void ordenacao() {
                 printf("\nERRO: escolha uma opcao valida!\n");
             break;
         }
+    } while (op != 0);
 
     fclose(arqPF);
     fclose(arqPJ);
@@ -3136,8 +3131,6 @@ void ordenacao() {
     fclose(arqPec);
     fclose(arqSer);
     fclose(arqVen);
-
-    } while (op != 0);
 }
 
 // FIM DA FUNCAO DE ORDENACAO --------------------------------------------
