@@ -3012,7 +3012,7 @@ void ordenacao() {
                                 fread(&M, sizeof(maquinarios), 1, arqMaq);
 
                                 fseek(arqPF, (i + 1) * sizeof(maquinarios), SEEK_SET);
-                                fread(&PF_ORD, sizeof(maquinarios), 1, arqPF);
+                                fread(&M_ORD, sizeof(maquinarios), 1, arqPF);
 
                                 if(strcmp(M.nome, M_ORD.nome) > 0) {
                                     fseek(arqMaq, i * sizeof(maquinarios), SEEK_SET);
