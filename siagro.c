@@ -350,7 +350,7 @@ void cadastroDeClientes() {
                                     fgets(PF.email, MAXSTR, stdin);
                                     PF.email[strcspn(PF.email, "\n")] = '\0';
 
-                                    printf("\nSeu telefone:");
+                                    printf("\nSeu telefone: ");
                                     scanf("%11s", PF.telefone);
                                     limparBuffer();
 
@@ -393,7 +393,7 @@ void cadastroDeClientes() {
                                     fgets(PJ.nomeDoResponsavel, MAXSTR, stdin);
                                     PJ.nomeDoResponsavel[strcspn(PJ.nomeDoResponsavel, "\n")] = '\0';
 
-                                    printf("\nO telefone empresarial:");
+                                    printf("\nO telefone empresarial: ");
                                     scanf("%11s", PJ.telefoneEmpresarial);
                                     limparBuffer();
                                     
@@ -1305,7 +1305,7 @@ void editarCadastros() {
                             posPec = validarPecas(arqPec, P.codigo);
 
                             if (posPec == -1) {
-                                printf("ERRO: CODIGO nao encontrado!\n");
+                                printf("\nERRO: CODIGO nao encontrado!\n");
                                 system("pause");
                             } else {
                                 fseek(arqPec, posPec, SEEK_SET);
@@ -1424,7 +1424,7 @@ void editarCadastros() {
                                     }
                                 } while (op2 != 0);
                             }
-                            printf("\nDeseja editar outra Pecas? (S/N): ");
+                            printf("\nDeseja editar outra Peca? (S/N): ");
                         } while (toupper(getche()) == 'S');
                     break;
                 break;
@@ -1647,7 +1647,7 @@ void realizarVenda() {
                         posMaq = validarMaquinario(arqMaq, V.codigoVenda);
 
                         if (pos == -1 || posMaq == -1) {
-                            printf("\nERRO: Um dos dados nao exite no cadastro!\n");
+                            printf("\nERRO: Um dos dados nao existe no cadastro!\n");
                             system("pause");
                         } else {
                             system("cls");
@@ -1729,7 +1729,7 @@ void realizarVenda() {
                         posPec = validarPecas(arqPec, V.codigoVenda);
 
                         if(pos == -1 || posPec == -1) {
-                            printf("\nERRO: Um dos dados nao exite no cadastro!\n");
+                            printf("\nERRO: Um dos dados nao existe no cadastro!\n");
                             system("pause");
                         } else {
                             system("cls");
@@ -1821,7 +1821,7 @@ void realizarVenda() {
                         posSer = validarID(arqSer, V.IDServico);
 
                         if (pos == -1 || posSer == -1) {
-                            printf("\nERRO: Um dos dados nao exite no cadastro!\n");
+                            printf("\nERRO: Um dos dados nao existe no cadastro!\n");
                             system("pause");
                         } else {
                             system("cls");
@@ -1917,7 +1917,7 @@ void realizarVenda() {
                         posMaq = validarMaquinario(arqMaq, V.codigoVenda);
 
                         if (pos == -1 || posMaq == -1) {
-                            printf("\nERRO: Um dos dados nao exite no cadastro!\n");
+                            printf("\nERRO: Um dos dados nao existe no cadastro!\n");
                             system("pause");
                         } else {
                             system("cls");
@@ -2285,7 +2285,6 @@ void realizarExclusao() {
 
                         if (pos == -1) {
                             printf("\nERRO: o cpf digitado ainda nao foi cadastrado!\n");
-                            printf("\n");
                             system("pause");
                         } else {
                             fseek(arqPF, pos, SEEK_SET);
@@ -2323,10 +2322,8 @@ void realizarExclusao() {
                                     fclose(temp);
                                     remove("arqPF.bin");
                                     rename("arqTemp.bin", "arqPF.bin");
-                                    arqPF = fopen("arqPF.bin", "rb+");
                                     
                                     printf("\nCliente Excluido!\n");
-                                    printf("\n");
                                     system("pause");
                                 }
 
@@ -2473,7 +2470,7 @@ void realizarExclusao() {
                                 system("pause");
                                 } 
                             } else {
-                                printf("\nERRO: impossivel excluir com pecas no estoque!\n");
+                                printf("\nERRO: impossivel excluir com itens no estoque!\n");
                                 system("pause");
                             }
 
@@ -2534,7 +2531,7 @@ void realizarExclusao() {
                                     system("pause");
                             	}
                             } else {
-                            	printf("\nERRO: impossivel excluir com pecas no estoque!\n");
+                            	printf("\nERRO: impossivel excluir com itens no estoque!\n");
                                 system("pause");
                             }
                         }
@@ -2753,7 +2750,7 @@ void relatorios() {
                         system("pause");
                     break;
                 case 0:
-                        printf("\nRetornar...");
+                        printf("\nRetornando...");
                     break;
                 default:
                         printf("\nERRO: escolha uma opcao valida!\n");
@@ -2796,7 +2793,7 @@ void relatorios() {
                         system("pause");
                     break;
                 case 0:
-                        printf("\nRetornar...");
+                        printf("\nRetornando...");
                     break;
                 default:
                         printf("\nERRO: escolha uma opcao valida!\n");
@@ -2921,7 +2918,7 @@ void ordenacao() {
 
     do {
         system("cls");
-        printf("\n--- RELATORIOS ---\n");
+        printf("\n--- ORDENACAO ---\n");
         printf("\n1 - Clientes");
         printf("\n2 - Produtos");
         printf("\n3 - Servicos");
