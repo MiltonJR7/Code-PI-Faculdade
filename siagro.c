@@ -22,13 +22,13 @@ typedef struct {
 } clientesPJ;
 
 typedef struct {
-    char nome[MAXSTR], categoria[MAXSTR], codigo[20];
+    char nome[MAXSTR], categoria[MAXSTR], codigo[20], tipo;
     int quantidade;
     float preco;
 } maquinarios;
 
 typedef struct {
-    char nome[MAXSTR], categoria[MAXSTR], codigo[20];
+    char nome[MAXSTR], categoria[MAXSTR], codigo[20], tipo;
     int quantidade;
     float preco;
 } pecas;
@@ -41,11 +41,17 @@ typedef struct {
 } servicos;
 
 typedef struct {
-    char cpfVenda[12], cnpjVenda[15], codigoVenda[20], IDServico[10];
+    char cpfVenda[12], cnpjVenda[15], codigoVenda[20], IDServico[10], tipo;
     int quantDesejada, formaPagamento;
     float precoParaPagar, precoFinalPagar;
     date D;
 } vendas;
+
+typedef struct {
+    char cpfDev[12], cnpjDev[15];
+    int quantDevolver;
+    date D;
+} devolucao;
 
 // TERMINA AQUI AS STRUCTS PARA O PROJETO INTEIRO --------------------------------------------
 // FUNCOES DE SALVAR EM ARQUIVOS BINARIOS --------------------------------------------
@@ -251,6 +257,31 @@ int validarData(vendas V) {
         return 1;
     
     return 0;
+}
+
+void devolverMaquinario(FILE *arqVen, FILE *arqMaq, devolucao D) {
+    vendas V;
+    maquinarios M;
+    rewind(arqVen);
+
+    int pos;
+    pos = ftell(arqMaq) - sizeof(maquinarios);
+    fseek(arqMaq, pos, SEEK_SET);
+
+    while(fread(&V, sizeof(vendas), 1, arqVen) == 1) {
+        rewind(arqMaq);
+
+        while (fread(&M, sizeof(maquinarios), 1, arqMaq) == 1) {
+            if (strcmp(V.codigoVenda, M.codigo) == 0 && M.tipo == 'M' && strcmp(V.cpfVenda, D.cpfDev) == 0) {
+                M.quantidade += D.quantDevolver;
+                fwrite(&M, sizeof(maquinarios), 1, arqMaq);
+            }
+        }
+    }
+}
+
+void devolverPeca(FILE *arqVen, FILE *arqPec, devolucao D) {
+    
 }
 
 // TERMINA AQUI AS FUNCOES DE VALIDAR CPF E CNPJ EM ARQUIVOS BINARIOS --------------------------------------------
@@ -472,6 +503,8 @@ void cadastroDeClientes() {
                                     scanf("%f", &M.preco);
                                     getchar();
 
+                                    M.tipo = 'M';
+
                                     salvarMaquinario(M);
                                     printf("\nMaquinario cadastrado com sucesso!\n\n");
                                 } else {
@@ -509,6 +542,8 @@ void cadastroDeClientes() {
                                     printf("\nPreco da peca: ");
                                     scanf("%f", &P.preco);
                                     getchar();
+
+                                    M.tipo = 'P';
 
                                     salvarPecas(P);
                                     printf("\nPeca cadastrado com sucesso!\n\n");
@@ -1742,6 +1777,8 @@ void realizarVenda() {
                                 }
                             } while (valido == 0);
 
+                            V.tipo = M.tipo;
+
                             salvarVendas(V);
 
                             M.quantidade -= V.quantDesejada;
@@ -1843,6 +1880,8 @@ void realizarVenda() {
                                     valido = 0;
                                 }
                             } while (valido == 0);
+
+                            V.tipo = P.tipo;
 
                             salvarVendas(V);
 
@@ -2079,6 +2118,8 @@ void realizarVenda() {
                                 }
                             } while (valido == 0);
 
+                            V.tipo = M.tipo;
+
                             salvarVendas(V);
 
                             M.quantidade -= V.quantDesejada;
@@ -2182,6 +2223,8 @@ void realizarVenda() {
                                     valido = 0;
                                 }
                             } while (valido == 0);
+
+                            V.tipo = P.tipo;
 
                             salvarVendas(V);
 
@@ -3415,6 +3458,185 @@ void ordenacao() {
 }
 
 // FIM DA FUNCAO DE ORDENACAO --------------------------------------------
+
+void devolucoes() {
+    vendas V;
+    devolucao D;
+
+    FILE *arqPF = fopen("arqPF.bin", "rb+");
+    FILE *arqPJ = fopen("arqPJ.bin", "rb+");
+    FILE *arqMaq = fopen("arqMaquinario.bin", "rb+");
+    FILE *arqPec = fopen("arqPecas.bin", "rb+");
+    FILE *arqSer = fopen("arqServicos.bin", "rb+");
+    FILE *arqVen = fopen("arqVendas.bin", "rb+");
+
+    int op, posValid;
+
+    if (arqPF == NULL) {
+        arqPF = fopen("arqPF.bin", "wb+");
+        if (arqPF == NULL) {
+            printf("\nERRO ao criar o arquivo de clientes PF!");
+            return;
+    	}
+	}
+
+	if (arqPJ == NULL) {
+	    arqPJ = fopen("arqPJ.bin", "wb+");
+	    if (arqPJ == NULL) {
+	        printf("\nERRO ao criar o arquivo de clientes PJ!");
+	        return;
+	    }
+	}
+
+	if (arqMaq == NULL) {
+	    arqMaq = fopen("arqMaquinario.bin", "wb+");
+	    if (arqMaq == NULL) {
+	        printf("\nERRO ao criar o arquivo de maquinarios!");
+	        return;
+	    }
+	}
+
+	if (arqPec == NULL) {
+	    arqPec = fopen("arqPecas.bin", "wb+");
+	    if (arqPec == NULL) {
+	        printf("\nERRO ao criar o arquivo de pecas!");
+	        return;
+	    }
+	}
+	
+	if (arqSer == NULL) {
+	    arqSer = fopen("arqServicos.bin", "wb+");
+	    if (arqSer == NULL) {
+	        printf("\nERRO ao criar o arquivo de servicos!");
+	        return;
+	    }
+	}
+
+    if (arqVen == NULL) {
+        arqVen = fopen("arqVendas.bin", "wb+");
+	    if (arqVen == NULL) {
+	        printf("\nERRO ao criar o arquivo de venda!");
+	        return;
+	    }
+    }
+
+    do {
+        system("cls");
+        printf("\n--- DEVOLUCAO ---\n");
+        printf("\n1 - Cliente PF");
+        printf("\n2 - Cliente PJ");
+        printf("\n0 - Retornar ao menu");
+        printf("\nEscolha: ");
+        scanf("%d", &op);
+
+        switch (op) {
+        case 1:
+                system("cls");
+                printf("\n--- DEVOLUCAO DE CLIENTE PF ---\n");
+                printf("\nDigite o cpf: ");
+                scanf("%11s", D.cpfDev);
+                limparBuffer();
+
+                posValid = validarVendasPF(arqVen, D.cpfDev);
+
+                if (posValid == -1) {
+                    printf("\nERRO: nao existe compras vinculadas a este cpf!\n");
+                    system("pause");
+                } else {
+                    fseek(arqVen, posValid, SEEK_SET);
+                    fread(&V, sizeof(vendas), 1, arqVen);
+                    D.quantDevolver = V.quantDesejada;
+
+                    rewind(arqVen);
+                    while (fread(&V, sizeof(vendas), 1, arqVen) == 1) {
+                        if(strcmp(D.cpfDev, V.cpfVenda) == 0) {
+                            if (strlen(V.codigoVenda) > 0) {
+                                printf("\nCodigo do produto: %s", V.codigoVenda);
+                                printf("\nQuantidade do produto: %d", V.quantDesejada);
+                                if(V.formaPagamento == 1) {
+                                    printf("\nForma de pagamento: PIX");
+                                } else if (V.formaPagamento == 2) {
+                                    printf("\nForma de pagamento: BOLETO");
+                                } else {
+                                    printf("\nForma de pagamento: FINANCIAMENTO");
+                                }
+                                printf("\nPreco da compra: %.2f", V.precoFinalPagar);
+                                printf("\nData da compra: %02d/%02d/%02d", V.D.dataVendaDia, V.D.dataVendaMes, V.D.dataVendaAno);
+                                printf("\n--------------------------------------------\n");
+                            } else if (strlen(V.IDServico) > 0) {
+                                printf("\nID do servico: %s", V.IDServico);
+                                if(V.formaPagamento == 1) {
+                                    printf("\nForma de pagamento: PIX");
+                                } else if (V.formaPagamento == 2) {
+                                    printf("\nForma de pagamento: BOLETO");
+                                } else {
+                                    printf("\nForma de pagamento: FINANCIAMENTO");
+                                }
+                                printf("\nPreco da compra: %.2f", V.precoFinalPagar);
+                                printf("\nData da compra: %02d/%02d/%02d", V.D.dataVendaDia, V.D.dataVendaMes, V.D.dataVendaAno);
+                                printf("\n--------------------------------------------\n");
+                            }
+                        }
+                    }
+
+                    printf("\nDeseja realmente realizar a devolucao? <S/N>: ");
+                    
+                    if(toupper(getche()) == 'S') {
+                        while (fread(&V, sizeof(vendas), 1, arqVen) == 1) {
+                            if (strcmp(D.cpfDev, V.cpfVenda) == 0) {
+                                if (V.tipo == 'M') {
+                                    devolverMaquinario(arqVen, arqMaq, D);
+                                }  else if (V.tipo == 'P') {
+                                    devolverPeca(arqVen, arqPec, D);
+                                }
+                            }
+                        }
+
+                        FILE *temp = fopen("arqTemp.bin", "wb");
+
+                        if(temp == NULL) {
+                            printf("\nERRO: nao foi possivel abrir o arquivo temporario!\n");
+                            system("pause");
+                        } else {
+                            rewind(arqVen);
+
+                            while(fread(&V, sizeof(vendas), 1, arqVen) == 1) {
+                                if(strcmp(D.cpfDev, V.cpfVenda) != 0) {
+                                    fwrite(&V, sizeof(vendas), 1, temp);
+                                }
+                            }
+                        }
+
+                        fclose(temp);
+                        fclose(arqVen);
+                        remove("arqVendas.bin");
+                        rename("arqTemp.bin", "arqVendas.bin");
+                        arqVen = fopen("arqVendas.bin", "rb+");
+
+                        printf("\nDevolucao Realizada!\n");
+                        system("pause");
+                    } else {
+                        printf("\nCancelado com sucesso!\n");
+                        system("pause");
+                    }
+                }
+            break;
+        
+        default:
+                printf("\nERRO: escolha uma opcao valida!\n");
+            break;
+        }
+
+
+    } while (op != 0);
+    
+
+
+
+}
+
+
+
 // INICIO DA FUNCAO DO MAIN ----------------------------------------------
 
 int main() {
@@ -3426,10 +3648,11 @@ int main() {
         printf("\n1 - Cadastro");
         printf("\n2 - Busca");
         printf("\n3 - Editar");
-        printf("\n4 - Realizar venda");
+        printf("\n4 - Venda");
         printf("\n5 - Excluir");
         printf("\n6 - Relatorios");
         printf("\n7 - Ordenacao");
+        printf("\n8 - Devolucao");
         printf("\n0 - Sair");
         printf("\nEscolha: ");
         scanf("%d", &op);
@@ -3456,6 +3679,9 @@ int main() {
     		break;
         case 7:
                 ordenacao();
+            break;
+        case 8:
+                devolucoes();
             break;
         case 0:
                 printf("\nEncerrando...");
