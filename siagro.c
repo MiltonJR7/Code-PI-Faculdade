@@ -3433,6 +3433,7 @@ void ordenacao() {
 }
 
 // FIM DA FUNCAO DE ORDENACAO --------------------------------------------
+// INICIO DA FUNCAO DE DEVOLUCAO -----------------------------------------
 
 void devolucoes() {
     vendas V;
@@ -3725,8 +3726,7 @@ void devolucoes() {
     fclose(arqVen);
 }
 
-
-
+// FIM DA FUNCAO DE DEVOLUCAO --------------------------------------------
 // INICIO DA FUNCAO DO MAIN ----------------------------------------------
 
 int main() {
