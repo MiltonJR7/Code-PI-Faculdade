@@ -250,10 +250,10 @@ int validarData(vendas V) {
     if(V.D.dataVendaAno > 2025)
         return 1;
 
-    if(V.D.dataVendaAno == 2025 && V.D.dataVendaMes > 5)
+    if(V.D.dataVendaAno == 2025 && V.D.dataVendaMes > 6)
         return 1;
 
-    if(V.D.dataVendaAno == 2025 && V.D.dataVendaMes == 5 && V.D.dataVendaDia > 30)
+    if(V.D.dataVendaAno == 2025 && V.D.dataVendaMes == 6 && V.D.dataVendaDia > 13)
         return 1;
     
     return 0;
