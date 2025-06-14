@@ -259,6 +259,40 @@ int validarData(vendas V) {
     return 0;
 }
 
+int validacao(char str[]) {
+    int i = 0;
+    if (strlen(str) == 0) return 1;
+
+    while (str[i] != '\0') {
+        if (str[i] != ' ') {
+            return 0; 
+        }
+        i++;
+    }
+    return 1; 
+}
+int sonumero(char str[]) {
+    int i = 0;
+    while (str[i] != '\0') {
+        if (str[i] < '0' || str[i] > '9') {
+            return 0;
+        }
+        i++;
+    }
+    return 1;
+}
+
+int semnumero(char str[]) {
+    int i = 0;
+    while (str[i] != '\0') {
+        if (str[i] >= '0' && str[i] <= '9') {
+            return 0;
+        }
+        i++;
+    }
+    return 1; 
+}
+
 // TERMINA AQUI AS FUNCOES DE VALIDAR CPF E CNPJ EM ARQUIVOS BINARIOS --------------------------------------------
 // INICIO DA FUNCAO DE CADASTROS ---------------------------------------------------------------------------------
 
@@ -276,7 +310,7 @@ void cadastroDeClientes() {
     FILE *arqSer = fopen("arqServicos.bin", "rb+");
     FILE *arqVen = fopen("arqVendas.bin", "rb+");
 
-    int op, op2, op3, posCPF, posCNPJ, posMaq, posPec, posID;
+    int op, op2, op3, posCPF, posCNPJ, posMaq, posPec, posID, resultado;
 
     if (arqPF == NULL) {
         arqPF = fopen("arqPF.bin", "wb+");
@@ -325,7 +359,7 @@ void cadastroDeClientes() {
 	        return;
 	    }
     }
-
+	
     do {
         system("cls");
         printf("\n--- CADASTROS ---\n");
@@ -353,26 +387,43 @@ void cadastroDeClientes() {
                     case 1:
                             do {
                                 system("cls");
+                                
                                 printf("\n--- CLIENTES PF ---\n");
+                                do{
                                 printf("\nSeu cpf: ");
                                 scanf("%11s", PF.cpf);
                                 limparBuffer();
-
+                                if(strlen(PF.cpf)!=11 || !sonumero(PF.cpf))
+                                	printf("\nCPF Invalido\n");
+                            	}while(strlen(PF.cpf)!=11|| !sonumero(PF.cpf));
                                 posCPF = validarCPF(arqPF, PF.cpf);
 
                                 if (posCPF == -1) {
+                                	do{
+									
                                     printf("\nSeu nome: ");
                                     fgets(PF.nome, MAXSTR, stdin);
                                     PF.nome[strcspn(PF.nome, "\n")] = '\0';
-
+                                    if(validacao(PF.nome)|| !semnumero(PF.nome))
+                                       printf("\nNome Invalido\n");
+									}while(validacao(PF.nome)|| !semnumero(PF.nome));
+									
+									do{
                                     printf("\nSeu email: ");
                                     fgets(PF.email, MAXSTR, stdin);
                                     PF.email[strcspn(PF.email, "\n")] = '\0';
-
+                                    if(validacao(PF.email))
+                                       printf("\nEmail Invalido\n");
+                                	}while(validacao(PF.email));
+                                	
+                                	do{
                                     printf("\nSeu telefone: ");
                                     scanf("%11s", PF.telefone);
                                     limparBuffer();
-
+                                    if(strlen(PF.telefone)!=11|| !sonumero(PF.telefone))
+                                         printf("\nTelefone Invalido\n");
+                                	}while(strlen(PF.telefone)!=11|| !sonumero(PF.telefone));
+                                	
                                     do {
                                         printf("\nSua data de nascimento <dd mm aaaa>: ");
                                         scanf("%d%d%d", &PF.D.dia, &PF.D.mes, &PF.D.ano);
@@ -396,28 +447,45 @@ void cadastroDeClientes() {
                             do {
                                 system("cls");
                                 printf("\n--- CLIENTES PJ ---\n");
+                                do{
                                 printf("\nDigite seu cnpj: ");
                                 scanf("%14s", PJ.cnpj);
                                 limparBuffer();
-
+                                if(strlen(PJ.cnpj)!=14 || !sonumero(PJ.cnpj))
+                                	printf("\nCNPJ Invalido\n");
+                             	}while(strlen(PJ.cnpj)!=14 || !sonumero(PJ.cnpj));
+                             	
                                 posCNPJ = validarCNPJ(arqPJ, PJ.cnpj);
                                 
                                 if (posCNPJ == -1) {
+                                	do{
                                     printf("\nO nome empresarial: ");
                                     fgets(PJ.nomeEmpresarial, MAXSTR, stdin);
                                     PJ.nomeEmpresarial[strcspn(PJ.nomeEmpresarial, "\n")] = '\0';
-
+                                    if(validacao(PJ.nomeEmpresarial)|| !semnumero(PJ.nomeEmpresarial))
+                                       printf("\nNome Empresarial Invalido\n");
+       								}while(validacao(PJ.nomeEmpresarial)|| !semnumero(PJ.nomeEmpresarial));
+       								do{
                                     printf("\nO email empresarial: ");
                                     fgets(PJ.emailEmpresarial, MAXSTR, stdin);
                                     PJ.emailEmpresarial[strcspn(PJ.emailEmpresarial, "\n")] = '\0';
-
+                                    if(validacao(PJ.emailEmpresarial))
+                                        printf("\nEmail Empresarial Invalido\n");
+									}while(validacao(PJ.emailEmpresarial));
+									do{
                                     printf("\nO nome do responsavel: ");
                                     fgets(PJ.nomeDoResponsavel, MAXSTR, stdin);
                                     PJ.nomeDoResponsavel[strcspn(PJ.nomeDoResponsavel, "\n")] = '\0';
-
+                                    if(validacao(PJ.nomeDoResponsavel)|| !semnumero(PJ.nomeDoResponsavel))
+                                       printf("\nNome do Responsavel Invalido\n");
+                                	}while(validacao(PJ.nomeDoResponsavel)|| !semnumero(PJ.nomeDoResponsavel));
+                                	do{
                                     printf("\nO telefone empresarial: ");
                                     scanf("%11s", PJ.telefoneEmpresarial);
                                     limparBuffer();
+                                    if(strlen(PJ.telefoneEmpresarial)!=11|| !sonumero(PJ.telefoneEmpresarial))
+                                        printf("\nTelefone Empresarial Invalido\n");
+                                	}while(strlen(PJ.telefoneEmpresarial)!=11|| !sonumero(PJ.telefoneEmpresarial));
                                     
                                     salvarClientePJ(PJ);
                                     printf("\nCliente cadastrado com sucesso!\n\n");
@@ -453,33 +521,49 @@ void cadastroDeClientes() {
 
                     switch (op2) {
                     case 1:
+                    	
                             do {
+                            
                                 system("cls");
                                 printf("\n--- MAQUINARIOS ---\n");
                                 printf("\nDigite o codigo do maquinario: ");
                                 scanf("%19s", M.codigo);
                                 limparBuffer();
-
+				
                                 posMaq = validarMaquinario(arqMaq, M.codigo);
 
                                 if(posMaq == -1) {
-                                    printf("\nNome do maquinario: ");
-                                    fgets(M.nome, MAXSTR, stdin);
-                                    M.nome[strcspn(M.nome, "\n")] = '\0';
-
-                                    printf("\nCategoria do maquinario: ");
-                                    fgets(M.categoria, MAXSTR, stdin);
-                                    M.categoria[strcspn(M.categoria, "\n")] = '\0';
-                                    
-                                    printf("\nQuantidade disponivel: ");
-                                    scanf("%d", &M.quantidade);
-
-                                    printf("\nPreco do maquinario: ");
-                                    scanf("%f", &M.preco);
-                                    getchar();
-
+                                	do {
+                                        printf("\nNome do maquinario: ");
+                                        fgets(M.nome, MAXSTR, stdin);
+                                        M.nome[strcspn(M.nome, "\n")] = '\0';
+                                        if(validacao(M.nome))
+                                        printf("\nNome Invalido\n");
+ 									} while(validacao(M.nome));
+ 									do {
+                                        printf("\nCategoria do maquinario: ");
+                                        fgets(M.categoria, MAXSTR, stdin);
+                                        M.categoria[strcspn(M.categoria, "\n")] = '\0';
+                                        if(validacao(M.categoria))
+                                        printf("\nCategoria Invalido\n");
+                                	} while(validacao(M.categoria));
+                                	do {
+                                        printf("\nQuantidade disponivel: ");
+                                        resultado = scanf("%d", &M.quantidade);
+                                        if(M.quantidade <= 0 || resultado != 1) {
+                                            printf("\nQuantidade Invalida!\n");
+                                            limparBuffer();
+                                        }
+									} while(M.quantidade <= 0 || resultado != 1);
+									do {
+                                        printf("\nPreco do maquinario: ");
+                                        resultado = scanf("%f", &M.preco);
+                                        if(M.preco <= 0 || resultado != 1) {
+                                            printf("\nPreco Invalido!\n");
+                                            limparBuffer();
+                                        }
+									} while(M.preco <= 0 || resultado != 1);
                                     M.tipo = 'M';
-
                                     salvarMaquinario(M);
                                     printf("\nMaquinario cadastrado com sucesso!\n\n");
                                 } else {
@@ -503,21 +587,36 @@ void cadastroDeClientes() {
                                 posPec = validarPecas(arqPec, P.codigo);
 
                                 if(posPec == -1) {
-                                    printf("\nNome da peca: ");
-                                    fgets(P.nome, MAXSTR, stdin);
-                                    P.nome[strcspn(P.nome, "\n")] = '\0';
-
-                                    printf("\nCategoria da peca: ");
-                                    fgets(P.categoria, MAXSTR, stdin);
-                                    P.categoria[strcspn(P.categoria, "\n")] = '\0';
-                                    
-                                    printf("\nQuantidade disponivel: ");
-                                    scanf("%d", &P.quantidade);
-
-                                    printf("\nPreco da peca: ");
-                                    scanf("%f", &P.preco);
-                                    getchar();
-
+                                	do{
+                                        printf("\nNome da peca: ");
+                                        fgets(P.nome, MAXSTR, stdin);
+                                        P.nome[strcspn(P.nome, "\n")] = '\0';
+                                        if(validacao(P.nome))
+                                            printf("\nNome Invalido\n");
+                                	}while(validacao(P.nome));
+                                	do{
+                                        printf("\nCategoria da peca: ");
+                                        fgets(P.categoria, MAXSTR, stdin);
+                                        P.categoria[strcspn(P.categoria, "\n")] = '\0';
+                                        if(validacao(P.categoria))
+                                            printf("\nCategoria Invalida\n");
+                                	}while(validacao(P.categoria));
+                                	do{
+                                        printf("\nQuantidade disponivel: ");
+                                        resultado = scanf("%d", &P.quantidade);
+                                        if(P.quantidade <=0 || resultado != 1) {
+                                            printf("\nQuantidade Invalida!\n");
+                                            limparBuffer();
+                                        }
+									}while(P.quantidade <=0 || resultado != 1);
+									do{
+                                        printf("\nPreco da peca: ");
+                                        resultado = scanf("%f", &P.preco);
+                                        if(P.preco<=0 || resultado != 1) {
+                                            printf("\nPreco Invalido!\n");
+                                            limparBuffer();
+                                        }
+									}while(P.preco<=0 || resultado != 1);
                                     P.tipo = 'P';
 
                                     salvarPecas(P);
@@ -564,18 +663,28 @@ void cadastroDeClientes() {
                                 posID = validarID(arqSer, S.id);
 
                                 if(posID == -1) {
+                                	do{
                                     printf("\nQual o tipo de servico: ");
                                     fgets(S.tipoServico, MAXSTR, stdin);
                                     S.tipoServico[strcspn(S.tipoServico, "\n")] = '\0';
-
+                                    if(validacao(S.tipoServico))
+                                       printf("\nTipo invalido\n");
+                                	}while(validacao(S.tipoServico));
+                                	do{
                                     printf("\nQual a descricao: ");
                                     fgets(S.descricao, MAXSTR, stdin);
                                     S.descricao[strcspn(S.descricao, "\n")] = '\0';
-
+                                    if(validacao(S.descricao))
+                                       printf("\ndescricao invalida\n");
+									}while(validacao(S.descricao));
+									do{
                                     printf("\nQual o preco do servico: ");
-                                    scanf("%f", &S.preco);
-                                    getchar();
-
+                                    resultado = scanf("%f", &S.preco);
+                                    if(S.preco<=0 || resultado != 1){
+                                        printf("\nPreco Invalido!\n");
+                                        limparBuffer();
+                                    }
+									}while(S.preco<=0 || resultado != 1);
                                     salvarServico(S);
                                     printf("\nServico cadastrado com sucesso!\n\n");
                                 } else {
@@ -911,7 +1020,7 @@ void editarCadastros() {
     FILE *arqPec = fopen("arqPecas.bin", "rb+");
     FILE *arqSer = fopen("arqServicos.bin", "rb+");
 
-    int op, op2, op3, posCPF, posCNPJ, posMaq, posPec, posID;
+    int op, op2, op3, posCPF, posCNPJ, posMaq, posPec, posID, resultado=0;
 
     do {
         system("cls");
@@ -971,9 +1080,14 @@ void editarCadastros() {
                                     switch (op2) {
                                         case 1:
                                                 system("cls");
-                                                printf("\nNovo telefone: ");
-                                                scanf("%11s", PF.telefone);
-                                                limparBuffer();
+                                                
+                                                do{
+				                                printf("\nNovo telefone: ");
+				                                scanf("%11s", PF.telefone);
+				                                limparBuffer();
+				                                if(strlen(PF.telefone)!=11|| !sonumero(PF.telefone))
+				                                    printf("\nNovo Telefone Invalido\n");
+				                                }while(strlen(PF.telefone)!=11|| !sonumero(PF.telefone));
 
                                                 fseek(arqPF, posCPF, SEEK_SET);
                                                 fwrite(&PF, sizeof(clientesPF), 1, arqPF);
@@ -993,10 +1107,15 @@ void editarCadastros() {
                                             break;
 
                                         case 2:
-                                                system("cls");
-                                                printf("\nNovo email: ");
-                                                fgets(PF.email, MAXSTR, stdin);
-                                                PF.email[strcspn(PF.email, "\n")] = '\0';
+                                        	    system("cls");
+                                        		do{
+			                                    printf("\nNovo email: ");
+			                                    fgets(PF.email, MAXSTR, stdin);
+			                                    PF.email[strcspn(PF.email, "\n")] = '\0';
+			                                    if(validacao(PF.email))
+			                                       printf("\nNovo Email Invalido\n");
+			                                	}while(validacao(PF.email));
+                                        	
 
                                                 fseek(arqPF, posCPF, SEEK_SET);
                                                 fwrite(&PF, sizeof(clientesPF), 1, arqPF);
@@ -1062,9 +1181,14 @@ void editarCadastros() {
                                     switch (op2) {
                                         case 1:
                                                 system("cls");
-                                                printf("\nNovo nome empresarial: ");
-                                                fgets(PJ.nomeEmpresarial, MAXSTR, stdin);
-                                                PJ.nomeEmpresarial[strcspn(PJ.nomeEmpresarial, "\n")] = '\0';
+                                                
+                                                do{
+			                                    printf("\nNovo nome empresarial: ");
+			                                    fgets(PJ.nomeEmpresarial, MAXSTR, stdin);
+			                                    PJ.nomeEmpresarial[strcspn(PJ.nomeEmpresarial, "\n")] = '\0';
+			                                    if(validacao(PJ.nomeEmpresarial)|| !semnumero(PJ.nomeEmpresarial))
+			                                       printf("\nNovo Nome Empresarial Invalido\n");
+			       								}while(validacao(PJ.nomeEmpresarial)|| !semnumero(PJ.nomeEmpresarial));
 
                                                 fseek(arqPJ, posCNPJ, SEEK_SET);
                                                 fwrite(&PJ, sizeof(clientesPJ), 1, arqPJ);
@@ -1085,9 +1209,14 @@ void editarCadastros() {
 
                                         case 2:
                                                 system("cls");
-                                                printf("\nNovo telefone: ");
-                                                scanf("%11s", PJ.telefoneEmpresarial);
-                                                limparBuffer();
+                                                
+                                                do{
+			                                    printf("\nNovo telefone empresarial: ");
+			                                    scanf("%11s", PJ.telefoneEmpresarial);
+			                                    limparBuffer();
+			                                    if(strlen(PJ.telefoneEmpresarial)!=11|| !sonumero(PJ.telefoneEmpresarial))
+			                                        printf("\nNovo Telefone Empresarial Invalido\n");
+			                                	}while(strlen(PJ.telefoneEmpresarial)!=11|| !sonumero(PJ.telefoneEmpresarial));
 
                                                 fseek(arqPJ, posCNPJ, SEEK_SET);
                                                 fwrite(&PJ, sizeof(clientesPJ), 1, arqPJ);
@@ -1107,9 +1236,14 @@ void editarCadastros() {
                                             break;
                                         case 3:
                                                 system("cls");
-                                                printf("\nNovo email: ");
-                                                fgets(PJ.emailEmpresarial, MAXSTR, stdin);
-                                                PJ.emailEmpresarial[strcspn(PJ.emailEmpresarial, "\n")] = '\0';
+                                                
+                                                do{
+			                                    printf("\nNovo email empresarial: ");
+			                                    fgets(PJ.emailEmpresarial, MAXSTR, stdin);
+			                                    PJ.emailEmpresarial[strcspn(PJ.emailEmpresarial, "\n")] = '\0';
+			                                    if(validacao(PJ.emailEmpresarial))
+			                                        printf("\nNovo Email Empresarial Invalido!\n");
+												}while(validacao(PJ.emailEmpresarial));
 
                                                 fseek(arqPJ, posCNPJ, SEEK_SET);
                                                 fwrite(&PJ, sizeof(clientesPJ), 1, arqPJ);                              
@@ -1129,9 +1263,14 @@ void editarCadastros() {
                                             break;
                                         case 4:
                                                 system("cls");
-                                                printf("\nNovo nome do responsavel: ");
-                                                fgets(PJ.nomeDoResponsavel, MAXSTR, stdin);
-                                                PJ.nomeDoResponsavel[strcspn(PJ.nomeDoResponsavel, "\n")] = '\0';
+                                                
+                                                do{
+			                                    printf("\nNovo responsavel: ");
+			                                    fgets(PJ.nomeDoResponsavel, MAXSTR, stdin);
+			                                    PJ.nomeDoResponsavel[strcspn(PJ.nomeDoResponsavel, "\n")] = '\0';
+			                                    if(validacao(PJ.nomeDoResponsavel)|| !semnumero(PJ.nomeDoResponsavel))
+			                                       printf("\nNome do Responsavel Invalido\n");
+			                                	}while(validacao(PJ.nomeDoResponsavel)|| !semnumero(PJ.nomeDoResponsavel));
 
                                                 fseek(arqPJ, posCNPJ, SEEK_SET);
                                                 fwrite(&PJ, sizeof(clientesPJ), 1, arqPJ);
@@ -1220,9 +1359,14 @@ void editarCadastros() {
                                     switch (op2) {
                                         case 1:
                                                 system("cls");
-                                                printf("\nNovo nome do maquinario: ");
-                                                fgets(M.nome, MAXSTR, stdin);
-                                                M.nome[strcspn(M.nome, "\n")] = '\0';
+                                                
+                                                do{
+			                                    printf("\nNovo Nome do maquinario: ");
+			                                    fgets(M.nome, MAXSTR, stdin);
+			                                    M.nome[strcspn(M.nome, "\n")] = '\0';
+			                                    if(validacao(M.nome))
+			                                       printf("\nNome Invalido!\n");
+			 									}while(validacao(M.nome));
 
                                                 fseek(arqMaq, posMaq, SEEK_SET);
                                                 fwrite(&M, sizeof(maquinarios), 1, arqMaq);
@@ -1243,9 +1387,15 @@ void editarCadastros() {
 
                                         case 2:
                                                 system("cls");
-                                                printf("\nNova categoria: ");
-                                                fgets(M.categoria, MAXSTR, stdin);
-                                                M.categoria[strcspn(M.categoria, "\n")] = '\0';
+                                                
+                                                do{
+			                                    printf("\nNova Categoria do maquinario: ");
+			                                    fgets(M.categoria, MAXSTR, stdin);
+			                                    M.categoria[strcspn(M.categoria, "\n")] = '\0';
+			                                    if(validacao(M.categoria))
+			                                       printf("\nCategoria Invalido!\n");
+			                                	}while(validacao(M.categoria));
+                                                
 
                                                 fseek(arqMaq, posMaq, SEEK_SET);
                                                 fwrite(&M, sizeof(maquinarios), 1, arqMaq); 
@@ -1265,9 +1415,15 @@ void editarCadastros() {
                                             break;
                                         case 3:
                                                 system("cls");
-                                                printf("\nNova quantidade: ");
-                                                scanf("%d", &M.quantidade);
-                                                getchar();
+                                                
+                                                do {
+                                                    printf("\nNova Quantidade disponivel: ");
+                                                    resultado = scanf("%d", &M.quantidade);
+                                                    if(M.quantidade <= 0 || resultado != 1){
+                                                        printf("\nQuantidade Invalida!\n");
+                                                        limparBuffer();
+                                                    }
+												} while(M.quantidade <= 0 || resultado != 1);
 
                                                 fseek(arqMaq, posMaq, SEEK_SET);
                                                 fwrite(&M, sizeof(maquinarios), 1, arqMaq);
@@ -1287,9 +1443,15 @@ void editarCadastros() {
                                             break;
                                         case 4:
                                                 system("cls");
-                                                printf("\nNovo preco: ");
-                                                scanf("%f", &M.preco);
-                                                getchar();
+                                                
+                                                do {
+                                                    printf("\nPreco do maquinario: ");
+                                                    resultado = scanf("%f", &M.preco);
+                                                    if(M.preco <= 0 || resultado != 1){
+                                                        printf("\nPreco Invalido\n");
+                                                        limparBuffer();
+                                                    }
+												} while(M.preco <= 0 || resultado != 1);
 
                                                 fseek(arqMaq, posMaq, SEEK_SET);
                                                 fwrite(&M, sizeof(maquinarios), 1, arqMaq);
@@ -1354,9 +1516,15 @@ void editarCadastros() {
                                     switch (op2) {
                                         case 1:
                                                 system("cls");
-                                                printf("\nNovo nome da peca: ");
-                                                fgets(P.nome, MAXSTR, stdin);
-                                                P.nome[strcspn(P.nome, "\n")] = '\0';
+                                                
+                                                do{
+			                                    printf("\nNovo Nome da peca: ");
+			                                    fgets(P.nome, MAXSTR, stdin);
+			                                    P.nome[strcspn(P.nome, "\n")] = '\0';
+			                                    if(validacao(P.nome))
+			                                       printf("\nNome Invalido!\n");
+			                                	}while(validacao(P.nome));
+                                                
 
                                                 fseek(arqPec, posPec, SEEK_SET);
                                                 fwrite(&P, sizeof(pecas), 1, arqPec);
@@ -1377,9 +1545,14 @@ void editarCadastros() {
 
                                         case 2:
                                                 system("cls");
-                                                printf("\nNova categoria: ");
-                                                fgets(P.categoria, MAXSTR, stdin);
-                                                P.categoria[strcspn(P.categoria, "\n")] = '\0';
+                                                
+                                                do{
+			                                    printf("\nNova Categoria da peca: ");
+			                                    fgets(P.categoria, MAXSTR, stdin);
+			                                    P.categoria[strcspn(P.categoria, "\n")] = '\0';
+			                                    if(validacao(P.categoria))
+			                                       printf("\nCategoria Invalida!\n");
+			                                	}while(validacao(P.categoria));
 
                                                 fseek(arqPec, posPec, SEEK_SET);
                                                 fwrite(&P, sizeof(pecas), 1, arqPec);
@@ -1399,9 +1572,16 @@ void editarCadastros() {
                                             break;
                                         case 3:
                                                 system("cls");
-                                                printf("\nNova quantidade: ");
-                                                scanf("%d", &P.quantidade);
-                                                getchar();
+                                                
+                                                do {
+                                                    printf("\nNova Quantidade disponivel: ");
+                                                    resultado = scanf("%d", &P.quantidade);
+                                                    getchar();
+                                                    if(P.quantidade <=0 || resultado != 1){
+                                                        printf("\nQuantidade Invalida!\n");
+                                                        limparBuffer();
+                                                    }
+												} while(P.quantidade <=0 || resultado != 1);
 
                                                 fseek(arqPec, posPec, SEEK_SET);
                                                 fwrite(&P, sizeof(pecas), 1, arqPec);
@@ -1421,9 +1601,15 @@ void editarCadastros() {
                                             break;
                                         case 4:
                                                 system("cls");
-                                                printf("Novo preco: ");
-                                                scanf("%f", &P.preco);
-                                                getchar();
+                                                
+                                                do {
+                                                    printf("\nNovo Preco da peca: ");
+                                                    scanf("%f", &P.preco);
+                                                    if(P.preco<=0 || resultado != 1){
+                                                        printf("\nPreco Invalido!\n");
+                                                        limparBuffer();
+                                                    }
+												} while(P.preco<=0 || resultado != 1);
 
                                                 fseek(arqPec, posPec, SEEK_SET);
                                                 fwrite(&P, sizeof(pecas), 1, arqPec);
@@ -1507,9 +1693,14 @@ void editarCadastros() {
                                     switch (op2) {
                                         case 1:
                                                 system("cls");
-                                                printf("\nNovo tipo do servico: ");
-                                                fgets(S.tipoServico, MAXSTR, stdin);
-                                                S.tipoServico[strcspn(S.tipoServico, "\n")] = '\0';
+                                                
+                                                do{
+			                                    printf("\nNovo o tipo de servico: ");
+			                                    fgets(S.tipoServico, MAXSTR, stdin);
+			                                    S.tipoServico[strcspn(S.tipoServico, "\n")] = '\0';
+			                                    if(validacao(S.tipoServico))
+			                                       printf("\nTipo invalido!\n");
+			                                	}while(validacao(S.tipoServico));
 
                                                 fseek(arqSer, posID, SEEK_SET);
                                                 fwrite(&S, sizeof(servicos), 1, arqSer);
@@ -1529,9 +1720,16 @@ void editarCadastros() {
 
                                         case 2:
                                                 system("cls");
-                                                printf("\nNova descricao: ");
-                                                fgets(S.descricao, MAXSTR, stdin);
-                                                S.descricao[strcspn(S.descricao, "\n")] = '\0';
+                                                
+                                                do{
+			                                    printf("\nNova descricao: ");
+			                                    fgets(S.descricao, MAXSTR, stdin);
+			                                    S.descricao[strcspn(S.descricao, "\n")] = '\0';
+			                                    if(validacao(S.descricao))
+			                                       printf("\ndescricao invalida!\n");
+												}while(validacao(S.descricao));
+                                                
+
 
                                                 fseek(arqSer, posID, SEEK_SET);
                                                 fwrite(&S, sizeof(servicos), 1, arqSer);
@@ -1551,9 +1749,17 @@ void editarCadastros() {
                                             break;
                                         case 3:
                                                 system("cls");
-                                                printf("\nNovo preco: ");
-                                                scanf("%f", &S.preco);
-                                                getchar();
+                                                
+                                                do {
+                                                    printf("\nNovo preco do servico: ");
+                                                    scanf("%f", &S.preco);
+                                                    getchar();
+                                                    if(S.preco<=0 || resultado != 1) {
+                                                        printf("\nPreco Invalido!\n");
+                                                        limparBuffer();
+                                                    }
+												} while(S.preco<=0 || resultado != 1);
+
 
                                                 fseek(arqSer, posID, SEEK_SET);
                                                 fwrite(&S, sizeof(servicos), 1, arqSer);
@@ -1704,11 +1910,14 @@ void realizarVenda() {
                         printf("\nQuantidade: %d", M.quantidade);
                         printf("\nPreco: %.2f", M.preco);
                         printf("\n----------------\n");
-
+                        
+                        do{
                         printf("\nDigite a quantidade da compra: ");
                         scanf("%d" , &V.quantDesejada);
                         getchar();
-
+                        if(V.quantDesejada <=0)
+                          printf("\nQuantidade Invalida\n");
+						}while(V.quantDesejada <=0);
                         if (V.quantDesejada > M.quantidade) {
                             printf("\nEstoque insuficiente!\n");
                             system("pause");
@@ -1808,10 +2017,13 @@ void realizarVenda() {
                         printf("\nQuantidade: %d", P.quantidade);
                         printf("\nPreco: %.2f", P.preco);
                         printf("\n----------------\n");
-
+                        do{
                         printf("\nDigite a quantidade desejada: ");
                         scanf("%d", &V.quantDesejada);
                         getchar();
+                        if(V.quantDesejada<=0)
+                           printf("\nQuantidade Invalida\n");
+                    	}while(V.quantDesejada<=0);
 
                         if (V.quantDesejada > P.quantidade) {
                             printf("\nEstoque insuficiente!\n");
@@ -2045,11 +2257,13 @@ void realizarVenda() {
                         printf("\nQuantidade: %d", M.quantidade);
                         printf("\nPreco: %.2f", M.preco);
                         printf("\n----------------\n");
-
+                        do{
                         printf("\nDigite a quantidade da compra: ");
                         scanf("%d" , &V.quantDesejada);
                         getchar();
-
+                        if(V.quantDesejada<=0)
+                          printf("\nQuantidade invalida\n");
+						}while(V.quantDesejada<=0);
                         if (V.quantDesejada > M.quantidade) {
                             printf("\nEstoque insuficiente!\n");
                             system("pause");
@@ -2151,10 +2365,13 @@ void realizarVenda() {
                         printf("\nQuantidade: %d", P.quantidade);
                         printf("\nPreco: %.2f", P.preco);
                         printf("\n----------------\n");
-
+ 						do{
                         printf("\nDigite a quantidade desejada: ");
                         scanf("%d", &V.quantDesejada);
                         getchar();
+                        if(V.quantDesejada<=0)
+                           printf("\nQuantidade invalida\n");
+                    	}while(V.quantDesejada<=0);
 
                         if (V.quantDesejada > P.quantidade) {
                             printf("\nEstoque insuficiente!\n");
@@ -2895,9 +3112,11 @@ void relatorios() {
 
                 switch (op2) {
                 case 1:
+                        rewind(arqPF);
                         while (fread(&PF, sizeof(clientesPF), 1, arqPF) == 1) {
                             printf("\nDados do Cliente PF: ");
                             printf("\n----------------");
+                            printf("\nCPF: %.3s.%.3s.%.3s-%.2s", PF.cpf, PF.cpf+3, PF.cpf+6, PF.cpf+9);
                             printf("\nNome: %s", PF.nome);
                             printf("\nTelefone: (%.2s) %.5s-%.4s", PF.telefone, PF.telefone+2, PF.telefone+7);
                             printf("\nEmail: %s", PF.email);
@@ -2907,9 +3126,11 @@ void relatorios() {
                         system("pause");
                     break;
                 case 2:
+                        rewind(arqPJ);
                         while (fread(&PJ, sizeof(clientesPJ), 1, arqPJ) == 1) {
                             printf("\nDados do Cliente PJ: ");
                             printf("\n----------------");
+                            printf("\nCNPJ: %.2s.%.3s.%.3s/%.4s-%2s", PJ.cnpj, PJ.cnpj+2, PJ.cnpj+5, PJ.cnpj+8, PJ.cnpj+12);
                             printf("\nNome empresarial: %s", PJ.nomeEmpresarial);
                             printf("\nFone: (%.2s) %.5s-%.4s", PJ.telefoneEmpresarial, PJ.telefoneEmpresarial+2, PJ.telefoneEmpresarial+7);
                             printf("\nEmail: %s", PJ.emailEmpresarial);
@@ -2939,6 +3160,7 @@ void relatorios() {
 
                 switch (op2) {
                 case 1:
+                        rewind(arqMaq);
                         while (fread(&M, sizeof(maquinarios), 1, arqMaq) == 1) {
                             printf("\nDados do Maquinario: ");
                             printf("\n----------------");
@@ -2951,6 +3173,7 @@ void relatorios() {
                         system("pause");
                     break;
                 case 2:
+                        rewind(arqPec);
                         while (fread(&P, sizeof(pecas), 1, arqPec) == 1) {
                             printf("\nDados da Peca: ");
                             printf("\n----------------");
@@ -2982,6 +3205,7 @@ void relatorios() {
 
                 switch (op3) {
                 case 1:
+                        rewind(arqSer);
                         while(fread(&S, sizeof(servicos), 1, arqSer) == 1) {
                             printf("\nDados do Servico: ");
                             printf("\n----------------");
