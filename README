@@ -1,66 +1,83 @@
+🌾 SIAGRO – Sistema de Gestão de Oficina Agrícola
+O SIAGRO é um sistema escrito em C para facilitar o gerenciamento de oficinas agrícolas, permitindo controle completo de clientes (PF e PJ), maquinários, peças, serviços e vendas.
+Ele utiliza arquivos binários para armazenamento persistente dos dados.
 
-# 🌾 **SIAGRO – Sistema de Gestão de Oficina Agrícola**  
+⚙️ Funcionalidades Implementadas
+🧑‍🌾 Clientes
+Cadastro e busca de Pessoa Física (PF) com validação por CPF.
 
-O **SIAGRO** é um sistema escrito em **C** para facilitar o gerenciamento de **oficinas agrícolas**, permitindo controle completo de **clientes (PF e PJ)**, **maquinários**, **peças**, **serviços** e **vendas**.  
-Ele utiliza **arquivos binários** para armazenamento persistente dos dados.  
+Cadastro e busca de Pessoa Jurídica (PJ) com validação por CNPJ.
 
----
+Edição de:
 
-## ⚙️ **Funcionalidades Implementadas**  
+PF → telefone e e-mail.
 
-### 🧑‍🌾 **Clientes**
-- Cadastro e busca de **Pessoa Física (PF)** com validação por **CPF**.  
-- Cadastro e busca de **Pessoa Jurídica (PJ)** com validação por **CNPJ**.  
-- Edição de:
-  - PF → telefone e e-mail.  
-  - PJ → nome empresarial, telefone, e-mail e responsável.  
+PJ → nome empresarial, telefone, e-mail e responsável.
 
-### 🚜 **Produtos**
-- Cadastro, busca e edição de **maquinários**.  
-- Cadastro, busca e edição de **peças**.  
-- Validação por **código único**.  
+🚜 Produtos
+Cadastro, busca e edição de maquinários.
 
-### 🛠 **Serviços**
-- Cadastro, busca e edição de serviços por **ID**.  
-- Associação de serviços a clientes (**CPF ou CNPJ**).  
+Cadastro, busca e edição de peças.
 
-### 💰 **Vendas**
-- Venda de maquinários, peças e serviços.  
-- Cálculo automático do **preço final** com base na **forma de pagamento**:
-  - Pix  
-  - Boleto  
-  - Financiamento  
-- Atualização automática do **estoque**.  
-- Registro da **data da venda**.  
+Validação por código único.
 
----
+🛠 Serviços
+Cadastro, busca e edição de serviços por ID.
 
-## 📁 **Armazenamento**  
-Os dados são salvos em **arquivos binários**:  
+Associação de serviços a clientes (CPF ou CNPJ).
 
-| Tipo           | Arquivo              |
-|----------------|----------------------|
-| Clientes       | `arqPF.bin`, `arqPJ.bin` |
-| Produtos       | `arqMaquinario.bin`, `arqPecas.bin` |
-| Serviços       | `arqServicos.bin`    |
-| Vendas         | `arqVendas.bin`      |
+💰 Vendas
+Venda de maquinários, peças e serviços.
 
----
+Cálculo automático do preço final com base na forma de pagamento:
 
-## 🚧 **Status do Projeto**
-🟡 **Melhorias em andamento**  
+Pix
 
----
+Boleto
 
-## 🔮 **Melhorias Futuras**
-- ❌ Exclusão de registros.  
-- 🎨 Interface mais amigável via terminal.  
-- 📂 Modularização do código (**.h** e **.c** separados).  
-- 🛡 Validações mais robustas para entrada de dados.  
-- 📊 Relatórios de vendas.  
+Financiamento
 
----
+Atualização automática do estoque.
 
-## 🛠 **Tecnologias Utilizadas**
-- **Linguagem:** C (padrão **ANSI C**).  
-- **Armazenamento:** arquivo
+Registro da data da venda.
+
+📁 Armazenamento
+Os dados são salvos em arquivos binários:
+
+Tipo	Arquivo
+Clientes	arqPF.bin, arqPJ.bin
+Produtos	arqMaquinario.bin, arqPecas.bin
+Serviços	arqServicos.bin
+Vendas	arqVendas.bin
+
+🚧 Status do Projeto
+🟡 Melhorias em andamento
+
+🔮 Melhorias Futuras
+❌ Exclusão de registros.
+
+🎨 Interface mais amigável via terminal.
+
+📂 Modularização do código (.h e .c separados).
+
+🛡 Validações mais robustas para entrada de dados.
+
+📊 Relatórios de vendas.
+
+🛠 Tecnologias Utilizadas
+Linguagem: C (padrão ANSI C).
+
+Armazenamento: arquivos binários (fopen, fread, fwrite, fseek).
+
+Interface: console/terminal.
+
+Bibliotecas:
+
+c
+Copiar
+Editar
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <conio.h>
+#include <windows.h>
