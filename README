@@ -1,67 +1,80 @@
-🌾 SIAGRO - Sistema de Gestão de Oficina Agrícola
-O SIAGRO é um sistema escrito em C que visa facilitar o gerenciamento de oficinas agrícolas, permitindo o controle completo de clientes (PF e PJ), maquinários, peças, serviços e vendas. Ele utiliza arquivos binários para armazenamento persistente dos dados.
+/ | | / _ \ | _ \ / __ \ / _ \
+| ( | | | | | || |) | | | | | | |
+___ \ | | | | | || _ <| | | | | | |
+) || | | || || |) | || | || |
+|/|| ___/ |/ _/ ___/
+Sistema de Gestão de Oficina Agrícola
 
-⚙️ Funcionalidades Implementadas
-🧑‍🌾 Clientes
-Cadastro e busca de clientes PF (Pessoa Física) com validação por CPF
+# 🌾 **SIAGRO – Sistema de Gestão de Oficina Agrícola**  
 
-Cadastro e busca de clientes PJ (Pessoa Jurídica) com validação por CNPJ
+O **SIAGRO** é um sistema escrito em **C** para facilitar o gerenciamento de **oficinas agrícolas**, permitindo controle completo de **clientes (PF e PJ)**, **maquinários**, **peças**, **serviços** e **vendas**.  
+Ele utiliza **arquivos binários** para armazenamento persistente dos dados.  
 
-Edição de telefone e e-mail (PF) ou nome empresarial, telefone, e-mail e responsável (PJ)
+---
 
-🚜 Produtos
-Cadastro, busca e edição de maquinários
+## ⚙️ **Funcionalidades Implementadas**  
 
-Cadastro, busca e edição de peças
+### 🧑‍🌾 **Clientes**
+- Cadastro e busca de **Pessoa Física (PF)** com validação por **CPF**.  
+- Cadastro e busca de **Pessoa Jurídica (PJ)** com validação por **CNPJ**.  
+- Edição de:
+  - PF → telefone e e-mail.  
+  - PJ → nome empresarial, telefone, e-mail e responsável.  
 
-Validação por código único
+### 🚜 **Produtos**
+- Cadastro, busca e edição de **maquinários**.  
+- Cadastro, busca e edição de **peças**.  
+- Validação por **código único**.  
 
-🛠 Serviços
-Cadastro, busca e edição de serviços por ID
+### 🛠 **Serviços**
+- Cadastro, busca e edição de serviços por **ID**.  
+- Associação de serviços a clientes (**CPF ou CNPJ**).  
 
-Associação de serviços a clientes (CPF ou CNPJ)
+### 💰 **Vendas**
+- Venda de maquinários, peças e serviços.  
+- Cálculo automático do **preço final** com base na **forma de pagamento**:
+  - Pix  
+  - Boleto  
+  - Financiamento  
+- Atualização automática do **estoque**.  
+- Registro da **data da venda**.  
 
-💰 Vendas
-Venda de maquinários, peças e serviços
+---
 
-Cálculo do preço final com base na forma de pagamento (Pix, Boleto, Financiamento)
+## 📁 **Armazenamento**  
+Os dados são salvos em **arquivos binários**:  
 
-Atualização automática do estoque
+| Tipo           | Arquivo              |
+|----------------|----------------------|
+| Clientes       | `arqPF.bin`, `arqPJ.bin` |
+| Produtos       | `arqMaquinario.bin`, `arqPecas.bin` |
+| Serviços       | `arqServicos.bin`    |
+| Vendas         | `arqVendas.bin`      |
 
-Registro da data da venda
+---
 
-📁 Armazenamento
-Os dados são armazenados em arquivos binários:
+## 🚧 **Status do Projeto**
+🟡 **Melhorias em andamento**  
 
-arqPF.bin, arqPJ.bin — Clientes
+---
 
-arqMaquinario.bin, arqPecas.bin — Produtos
+## 🔮 **Melhorias Futuras**
+- ❌ Exclusão de registros.  
+- 🎨 Interface mais amigável via terminal.  
+- 📂 Modularização do código (**.h** e **.c** separados).  
+- 🛡 Validações mais robustas para entrada de dados.  
+- 📊 Relatórios de vendas.  
 
-arqServicos.bin — Serviços
+---
 
-arqVendas.bin — Vendas
-
-🚧 Status do Projeto
-🟡 Melhorias em andamento
-
-🔮 Melhorias Futuras
-Exclusão de registros
-
-Interface mais amigável via terminal
-
-Modularização do código (separar por arquivos .h e .c)
-
-Validações mais robustas para dados de entrada
-
-Relatórios de vendas
-
-🛠 Tecnologias Utilizadas
-Linguagem C (padrão ANSI C)
-
-Arquivos binários (fopen, fread, fwrite, fseek)
-
-Console (terminal) para interface
-
-Bibliotecas:
-
-<stdio.h>, <string.h>, <ctype.h>, <conio.h>, <windows.h>
+## 🛠 **Tecnologias Utilizadas**
+- **Linguagem:** C (padrão **ANSI C**).  
+- **Armazenamento:** arquivos binários (`fopen`, `fread`, `fwrite`, `fseek`).  
+- **Interface:** console/terminal.  
+- **Bibliotecas:**  
+  ```c
+  #include <stdio.h>
+  #include <string.h>
+  #include <ctype.h>
+  #include <conio.h>
+  #include <windows.h>
