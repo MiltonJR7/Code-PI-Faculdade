@@ -93,20 +93,26 @@ As operações de leitura e escrita são realizadas por meio das funções padr�
 
 ## Status do Projeto
 
-- Em desenvolvimento
+- Concluído para fins acadêmicos
 - Funcionalidades principais implementadas
-- Melhorias estruturais planejadas
+- Melhorias estruturais planejadas para versões futuras
 
 ---
 
 ## Melhorias Futuras
 
-- Implementação de exclusão de registros
 - Modularização do código em arquivos `.h` e `.c`
 - Interface de terminal mais intuitiva
 - Validações mais robustas de entrada de dados
 - Geração de relatórios de vendas
 - Refatoração dos menus e organização do fluxo do sistema
+
+---
+
+## Observações
+
+- Projeto desenvolvido para ambiente Windows
+- Utiliza conio.h e windows.h
 
 ---
 
